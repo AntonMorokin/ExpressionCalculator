@@ -1,0 +1,13 @@
+﻿{
+  "components": [
+    {
+      "type": "Resources.ResourceStore, Resources",
+      "services": [
+        {
+          "type": "Resources.IResourceStore, Resources"
+        }
+      ],
+      "instanceScope": "singleinstance"
+    }
+  ]
+}
