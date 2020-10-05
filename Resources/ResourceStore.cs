@@ -1,7 +1,7 @@
 ﻿namespace Resources
 {
     /// <summary>
-    /// Realization of <see cref="IResourceStore"/>.
+    /// Implementation of <see cref="IResourceStore"/>.
     /// </summary>
     public class ResourceStore : IResourceStore
     {

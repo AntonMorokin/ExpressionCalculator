@@ -25,10 +25,11 @@ namespace Common
 
         private static IContainer InitializeContainer()
         {
-            var configBuilder = new ConfigurationBuilder();
-            configBuilder.AddJsonFile("autofac.json");
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("autofac.json")
+                .Build();
 
-            var module = new ConfigurationModule(configBuilder.Build());
+            var module = new ConfigurationModule(config);
             var containerBuilder = new ContainerBuilder();
             containerBuilder.RegisterModule(module);
 

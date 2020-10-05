@@ -14,6 +14,6 @@
         /// Set arguments of function.
         /// </summary>
         /// <param name="arguments">Function arguments.</param>
-        void SetArguments(params decimal[] arguments);
+        void SetArguments(params IHasValue[] arguments);
     }
 }

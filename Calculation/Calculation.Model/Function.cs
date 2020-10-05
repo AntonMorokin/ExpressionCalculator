@@ -6,7 +6,7 @@ using System.Collections.Immutable;
 namespace Calculation.Model
 {
     /// <summary>
-    /// Abstract realization of <see cref="IFunction"/>.
+    /// Abstract implementation of <see cref="IFunction"/>.
     /// </summary>
     public abstract class Function : IFunction
     {
@@ -18,7 +18,7 @@ namespace Calculation.Model
         /// <summary>
         /// Arguments of function.
         /// </summary>
-        protected IReadOnlyCollection<decimal> Arguments;
+        protected IReadOnlyList<IHasValue> Arguments;
 
         /// <inheritdoc />
         public abstract int NumberOfArguments { get; }
@@ -33,7 +33,7 @@ namespace Calculation.Model
         }
 
         /// <inheritdoc />
-        public void SetArguments(params decimal[] arguments)
+        public void SetArguments(params IHasValue[] arguments)
         {
             if (arguments.Length != NumberOfArguments)
             {
@@ -48,12 +48,12 @@ namespace Calculation.Model
         /// Calculate the value of function depended on current arguments.
         /// </summary>
         /// <returns>The value of function depended on current arguments.</returns>
-        protected abstract decimal Calculate();
+        protected abstract IHasValue Calculate();
 
         /// <inheritdoc />
         public decimal GetValue()
         {
-            return Calculate();
+            return Calculate().GetValue();
         }
     }
 }

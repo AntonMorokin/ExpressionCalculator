@@ -8,6 +8,15 @@
         }
       ],
       "instanceScope": "singleinstance"
+    },
+    {
+      "type": "Calculation.Model.Factories.NumberFactory, Calculation.Model",
+      "services": [
+        {
+          "type": "Calculation.Model.Factories.INumberFactory, Calculation.Model"
+        }
+      ],
+      "instanceScope": "singleinstance"
     }
   ]
 }
