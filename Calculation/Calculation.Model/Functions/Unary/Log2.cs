@@ -11,6 +11,9 @@ namespace Calculation.Model.Functions.Unary
     {
         private readonly INumberFactory _numberFactory;
 
+        /// <inheritdoc />
+        public override byte Priority => 8;
+
         /// <summary>
         /// Initializes new instance of <see cref="Log2"/>.
         /// </summary>

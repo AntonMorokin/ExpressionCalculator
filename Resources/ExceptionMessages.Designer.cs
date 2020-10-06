@@ -61,11 +61,20 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Denominator must not be zero..
+        /// </summary>
+        internal static string DenominatorIsZero {
+            get {
+                return ResourceManager.GetString("DenominatorIsZero", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The number of passed arguments does not correspond to this type of function..
         /// </summary>
-        internal static string NumberOfArgumentsMismatchExceptionMessage {
+        internal static string NumberOfArgumentsMismatch {
             get {
-                return ResourceManager.GetString("NumberOfArgumentsMismatchExceptionMessage", resourceCulture);
+                return ResourceManager.GetString("NumberOfArgumentsMismatch", resourceCulture);
             }
         }
     }

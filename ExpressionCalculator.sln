@@ -11,7 +11,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Calculation", "Calculation"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Resources", "Resources\Resources.csproj", "{94A336EF-C224-4563-AF89-45E69BA28CC0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{3361CF37-07ED-41B1-BE7C-FC8964AFD352}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csproj", "{3361CF37-07ED-41B1-BE7C-FC8964AFD352}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpressionTrees", "ExpressionTrees\ExpressionTrees.csproj", "{DFDE3F01-FF06-448A-B767-AA533C2E22DA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,6 +37,10 @@ Global
 		{3361CF37-07ED-41B1-BE7C-FC8964AFD352}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3361CF37-07ED-41B1-BE7C-FC8964AFD352}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3361CF37-07ED-41B1-BE7C-FC8964AFD352}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFDE3F01-FF06-448A-B767-AA533C2E22DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFDE3F01-FF06-448A-B767-AA533C2E22DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFDE3F01-FF06-448A-B767-AA533C2E22DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFDE3F01-FF06-448A-B767-AA533C2E22DA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

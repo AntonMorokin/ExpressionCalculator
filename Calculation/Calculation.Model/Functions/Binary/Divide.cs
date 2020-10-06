@@ -11,6 +11,9 @@ namespace Calculation.Model.Functions.Binary
     {
         private readonly INumberFactory _numberFactory;
 
+        /// <inheritdoc />
+        public override byte Priority => 2;
+
         /// <summary>
         /// Initializes new instance of <see cref="Divide"/>.
         /// </summary>
@@ -30,7 +33,8 @@ namespace Calculation.Model.Functions.Binary
 
             if (secondValue == 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(secondArg), "Denominator must not be zero.");
+                throw new ArgumentOutOfRangeException(nameof(secondArg),
+                    ResourceStore.GetExceptionMessage("DenominatorIsZero"));
             }
 
             return _numberFactory.CreateNumber(firstValue / secondValue);

@@ -117,7 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="NumberOfArgumentsMismatchExceptionMessage" xml:space="preserve">
+  <data name="DenominatorIsZero" xml:space="preserve">
+    <value>Denominator must not be zero.</value>
+  </data>
+  <data name="NumberOfArgumentsMismatch" xml:space="preserve">
     <value>The number of passed arguments does not correspond to this type of function.</value>
   </data>
 </root>

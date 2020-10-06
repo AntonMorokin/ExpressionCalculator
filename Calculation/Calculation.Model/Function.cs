@@ -21,6 +21,9 @@ namespace Calculation.Model
         protected IReadOnlyList<IHasValue> Arguments;
 
         /// <inheritdoc />
+        public abstract byte Priority { get; }
+
+        /// <inheritdoc />
         public abstract int NumberOfArguments { get; }
 
         /// <summary>
@@ -38,7 +41,7 @@ namespace Calculation.Model
             if (arguments.Length != NumberOfArguments)
             {
                 throw new ArgumentOutOfRangeException(
-                    ResourceStore.GetExceptionMessage("NumberOfArgumentsMismatchExceptionMessage"));
+                    ResourceStore.GetExceptionMessage("NumberOfArgumentsMismatch"));
             }
 
             Arguments = ImmutableList.CreateRange(arguments);

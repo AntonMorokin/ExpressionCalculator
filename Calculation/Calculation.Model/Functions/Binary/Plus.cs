@@ -10,6 +10,9 @@ namespace Calculation.Model.Functions.Binary
     {
         private readonly INumberFactory _numberFactory;
 
+        /// <inheritdoc />
+        public override byte Priority => 0;
+
         /// <summary>
         /// Initializes new instance of <see cref="Plus"/>.
         /// </summary>
