@@ -6,7 +6,7 @@ namespace Calculation.Model.Functions.Binary
     /// <summary>
     /// "Minus" binary function (a - b).
     /// </summary>
-    public class Minus : BinaryFunction
+    public sealed class Minus : BinaryFunction
     {
         private readonly INumberFactory _numberFactory;
 

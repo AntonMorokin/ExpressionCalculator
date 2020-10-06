@@ -6,7 +6,7 @@ namespace Calculation.Model.Functions.Binary
     /// <summary>
     /// "Multiply" binary function (a * b).
     /// </summary>
-    public class Multiply : BinaryFunction
+    public sealed class Multiply : BinaryFunction
     {
         private readonly INumberFactory _numberFactory;
 

@@ -6,7 +6,7 @@ namespace Calculation.Model.Functions.Binary
     /// <summary>
     /// "Plus" binary function (a + b).
     /// </summary>
-    public class Plus : BinaryFunction
+    public sealed class Plus : BinaryFunction
     {
         private readonly INumberFactory _numberFactory;
 

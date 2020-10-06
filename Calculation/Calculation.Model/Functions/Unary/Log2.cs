@@ -7,7 +7,7 @@ namespace Calculation.Model.Functions.Unary
     /// <summary>
     /// "Log by 2" unary function (log2(x)).
     /// </summary>
-    public class Log2 : UnaryFunction
+    public sealed class Log2 : UnaryFunction
     {
         private readonly INumberFactory _numberFactory;
 

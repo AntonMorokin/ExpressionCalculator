@@ -7,7 +7,7 @@ namespace Calculation.Model.Functions.Binary
     /// <summary>
     /// "Divide" binary function (a / b).
     /// </summary>
-    public class Divide : BinaryFunction
+    public sealed class Divide : BinaryFunction
     {
         private readonly INumberFactory _numberFactory;
 

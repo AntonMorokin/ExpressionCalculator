@@ -6,7 +6,7 @@ namespace Calculation.Model
     /// <summary>
     /// Simple number.
     /// </summary>
-    public class Number : IHasValue, IEquatable<Number>
+    public sealed class Number : IHasValue, IEquatable<Number>
     {
         private readonly decimal _value;
 
