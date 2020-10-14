@@ -3,7 +3,7 @@
     /// <summary>
     /// Implementation of <see cref="IResourceStore"/>.
     /// </summary>
-    public class ResourceStore : IResourceStore
+    internal class ResourceStore : IResourceStore
     {
         /// <inheritdoc />
         public string GetExceptionMessage(string resourceName)

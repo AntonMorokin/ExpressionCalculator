@@ -1,6 +1,4 @@
-﻿using Calculation.Model.Factories;
-
-namespace Calculation.Model
+﻿namespace Calculation.Model.Factories
 {
     /// <summary>
     /// Implementation of <see cref="INumberFactory"/>/

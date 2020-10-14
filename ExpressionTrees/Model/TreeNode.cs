@@ -4,22 +4,22 @@
     /// Node of expression (binary) tree.
     /// </summary>
     /// <typeparam name="T">Type of node value.</typeparam>
-    public class Node<T>
+    public class TreeNode<T>
     {
         /// <summary>
         /// Parent of node.
         /// </summary>
-        public Node<T> Parent { get; set; }
+        public TreeNode<T> Parent { get; set; }
 
         /// <summary>
         /// Left child of node.
         /// </summary>
-        public Node<T> LeftChild { get; set; }
+        public TreeNode<T> LeftChild { get; set; }
 
         /// <summary>
         /// Right child of node.
         /// </summary>
-        public Node<T> RightChild { get; set; }
+        public TreeNode<T> RightChild { get; set; }
 
         /// <summary>
         /// Node value.
@@ -27,10 +27,10 @@
         public T Value { get; set; }
 
         /// <summary>
-        /// Initializes instance of <see cref="Node{T}"/>.
+        /// Initializes instance of <see cref="TreeNode{T}"/>.
         /// </summary>
         /// <param name="parent">Parent of node.</param>
-        public Node(Node<T> parent)
+        public TreeNode(TreeNode<T> parent)
         {
             Parent = parent;
         }

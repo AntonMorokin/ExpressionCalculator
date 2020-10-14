@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Resources", "Resources\Reso
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csproj", "{3361CF37-07ED-41B1-BE7C-FC8964AFD352}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpressionTrees", "ExpressionTrees\ExpressionTrees.csproj", "{DFDE3F01-FF06-448A-B767-AA533C2E22DA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExpressionTrees", "ExpressionTrees\ExpressionTrees.csproj", "{DFDE3F01-FF06-448A-B767-AA533C2E22DA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Parsing", "Parsing\Parsing.csproj", "{4CDA2711-8C0B-4EAA-9268-1FF13B5ACD3C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +43,10 @@ Global
 		{DFDE3F01-FF06-448A-B767-AA533C2E22DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DFDE3F01-FF06-448A-B767-AA533C2E22DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DFDE3F01-FF06-448A-B767-AA533C2E22DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4CDA2711-8C0B-4EAA-9268-1FF13B5ACD3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4CDA2711-8C0B-4EAA-9268-1FF13B5ACD3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4CDA2711-8C0B-4EAA-9268-1FF13B5ACD3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4CDA2711-8C0B-4EAA-9268-1FF13B5ACD3C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
