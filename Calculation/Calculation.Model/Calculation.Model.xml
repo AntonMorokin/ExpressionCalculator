@@ -1,0 +1,295 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Calculation.Model</name>
+    </assembly>
+    <members>
+        <member name="T:Calculation.Model.Factories.INumberFactory">
+            <summary>
+            Factory of numbers.
+            </summary>
+        </member>
+        <member name="M:Calculation.Model.Factories.INumberFactory.CreateNumber(System.Decimal)">
+            <summary>
+            Creates number by its value.
+            </summary>
+            <param name="value">Number value.</param>
+            <returns>Number.</returns>
+        </member>
+        <member name="T:Calculation.Model.Factories.NumberFactory">
+            <summary>
+            Implementation of <see cref="T:Calculation.Model.Factories.INumberFactory"/>/
+            </summary>
+        </member>
+        <member name="M:Calculation.Model.Factories.NumberFactory.CreateNumber(System.Decimal)">
+            <inheritdoc />
+        </member>
+        <member name="T:Calculation.Model.Function">
+            <summary>
+            Abstract implementation of <see cref="T:Calculation.Model.IFunction"/>.
+            </summary>
+        </member>
+        <member name="F:Calculation.Model.Function.ResourceStore">
+            <summary>
+            Store of resources.
+            </summary>
+        </member>
+        <member name="F:Calculation.Model.Function.Arguments">
+            <summary>
+            Arguments of function.
+            </summary>
+        </member>
+        <member name="P:Calculation.Model.Function.Priority">
+            <inheritdoc />
+        </member>
+        <member name="P:Calculation.Model.Function.NumberOfArguments">
+            <inheritdoc />
+        </member>
+        <member name="M:Calculation.Model.Function.#ctor(Resources.IResourceStore)">
+            <summary>
+            Initialize new child instance of <see cref="T:Calculation.Model.Function"/>.
+            </summary>
+            <param name="resourceStore">Store of resources.</param>
+        </member>
+        <member name="M:Calculation.Model.Function.SetArguments(Calculation.Model.IHasValue[])">
+            <inheritdoc />
+        </member>
+        <member name="M:Calculation.Model.Function.Calculate">
+            <summary>
+            Calculate the value of function depended on current arguments.
+            </summary>
+            <returns>The value of function depended on current arguments.</returns>
+        </member>
+        <member name="M:Calculation.Model.Function.GetValue">
+            <inheritdoc />
+        </member>
+        <member name="M:Calculation.Model.Function.Render">
+            <summary>
+            Creates string representation of this object.
+            </summary>
+            <returns>String representation of this object.</returns>
+        </member>
+        <member name="M:Calculation.Model.Function.ToString">
+            <inheritdoc />
+        </member>
+        <member name="T:Calculation.Model.Functions.Binary.BinaryFunction">
+            <summary>
+            Binary function.
+            </summary>
+        </member>
+        <member name="P:Calculation.Model.Functions.Binary.BinaryFunction.NumberOfArguments">
+            <inheritdoc />
+        </member>
+        <member name="M:Calculation.Model.Functions.Binary.BinaryFunction.#ctor(Resources.IResourceStore)">
+            <summary>
+            Initializes new instance of <see cref="T:Calculation.Model.Functions.Binary.BinaryFunction"/>.
+            </summary>
+            <param name="resourceStore">Store of resources.</param>
+        </member>
+        <member name="M:Calculation.Model.Functions.Binary.BinaryFunction.Calculate">
+            <inheritdoc />
+        </member>
+        <member name="M:Calculation.Model.Functions.Binary.BinaryFunction.Calculate(Calculation.Model.IHasValue,Calculation.Model.IHasValue)">
+            <summary>
+            Calculates value of binary function using two arguments.
+            </summary>
+            <param name="firstArg">First arguments.</param>
+            <param name="secondArg">Second arguments.</param>
+            <returns>Value of binary function.</returns>
+        </member>
+        <member name="T:Calculation.Model.Functions.Binary.Divide">
+            <summary>
+            "Divide" binary function (a / b).
+            </summary>
+        </member>
+        <member name="P:Calculation.Model.Functions.Binary.Divide.Priority">
+            <inheritdoc />
+        </member>
+        <member name="M:Calculation.Model.Functions.Binary.Divide.#ctor(Resources.IResourceStore,Calculation.Model.Factories.INumberFactory)">
+            <summary>
+            Initializes new instance of <see cref="T:Calculation.Model.Functions.Binary.Divide"/>.
+            </summary>
+            <param name="resourceStore">Store of resources.</param>
+            <param name="numberFactory">Number factory.</param>
+        </member>
+        <member name="M:Calculation.Model.Functions.Binary.Divide.Calculate(Calculation.Model.IHasValue,Calculation.Model.IHasValue)">
+            <inheritdoc />
+        </member>
+        <member name="M:Calculation.Model.Functions.Binary.Divide.Render">
+            <inheritdoc />
+        </member>
+        <member name="T:Calculation.Model.Functions.Binary.Minus">
+            <summary>
+            "Minus" binary function (a - b).
+            </summary>
+        </member>
+        <member name="P:Calculation.Model.Functions.Binary.Minus.Priority">
+            <inheritdoc />
+        </member>
+        <member name="M:Calculation.Model.Functions.Binary.Minus.#ctor(Resources.IResourceStore,Calculation.Model.Factories.INumberFactory)">
+            <summary>
+            Initializes new instance of <see cref="T:Calculation.Model.Functions.Binary.Plus"/>.
+            </summary>
+            <param name="resourceStore">Store of resources.</param>
+            <param name="numberFactory">Number factory.</param>
+        </member>
+        <member name="M:Calculation.Model.Functions.Binary.Minus.Calculate(Calculation.Model.IHasValue,Calculation.Model.IHasValue)">
+            <inheritdoc />
+        </member>
+        <member name="M:Calculation.Model.Functions.Binary.Minus.Render">
+            <inheritdoc />
+        </member>
+        <member name="T:Calculation.Model.Functions.Binary.Multiply">
+            <summary>
+            "Multiply" binary function (a * b).
+            </summary>
+        </member>
+        <member name="P:Calculation.Model.Functions.Binary.Multiply.Priority">
+            <inheritdoc />
+        </member>
+        <member name="M:Calculation.Model.Functions.Binary.Multiply.#ctor(Resources.IResourceStore,Calculation.Model.Factories.INumberFactory)">
+            <summary>
+            Initializes new instance of <see cref="T:Calculation.Model.Functions.Binary.Multiply"/>.
+            </summary>
+            <param name="resourceStore">Store of resources.</param>
+            <param name="numberFactory">Number factory.</param>
+        </member>
+        <member name="M:Calculation.Model.Functions.Binary.Multiply.Calculate(Calculation.Model.IHasValue,Calculation.Model.IHasValue)">
+            <inheritdoc />
+        </member>
+        <member name="M:Calculation.Model.Functions.Binary.Multiply.Render">
+            <inheritdoc />
+        </member>
+        <member name="T:Calculation.Model.Functions.Binary.Plus">
+            <summary>
+            "Plus" binary function (a + b).
+            </summary>
+        </member>
+        <member name="P:Calculation.Model.Functions.Binary.Plus.Priority">
+            <inheritdoc />
+        </member>
+        <member name="M:Calculation.Model.Functions.Binary.Plus.#ctor(Resources.IResourceStore,Calculation.Model.Factories.INumberFactory)">
+            <summary>
+            Initializes new instance of <see cref="T:Calculation.Model.Functions.Binary.Plus"/>.
+            </summary>
+            <param name="resourceStore">Store of resources.</param>
+            <param name="numberFactory">Number factory.</param>
+        </member>
+        <member name="M:Calculation.Model.Functions.Binary.Plus.Calculate(Calculation.Model.IHasValue,Calculation.Model.IHasValue)">
+            <inheritdoc />
+        </member>
+        <member name="M:Calculation.Model.Functions.Binary.Plus.Render">
+            <inheritdoc />
+        </member>
+        <member name="T:Calculation.Model.Functions.Unary.Log2">
+            <summary>
+            "Log by 2" unary function (log2(x)).
+            </summary>
+        </member>
+        <member name="P:Calculation.Model.Functions.Unary.Log2.Priority">
+            <inheritdoc />
+        </member>
+        <member name="M:Calculation.Model.Functions.Unary.Log2.#ctor(Resources.IResourceStore,Calculation.Model.Factories.INumberFactory)">
+            <summary>
+            Initializes new instance of <see cref="T:Calculation.Model.Functions.Unary.Log2"/>.
+            </summary>
+            <param name="resourceStore">Store of resources.</param>
+            <param name="numberFactory">Number factory.</param>
+        </member>
+        <member name="M:Calculation.Model.Functions.Unary.Log2.Calculate(Calculation.Model.IHasValue)">
+            <inheritdoc />
+        </member>
+        <member name="M:Calculation.Model.Functions.Unary.Log2.Render">
+            <inheritdoc />
+        </member>
+        <member name="T:Calculation.Model.Functions.Unary.UnaryFunction">
+            <summary>
+            Unary function.
+            </summary>
+        </member>
+        <member name="P:Calculation.Model.Functions.Unary.UnaryFunction.NumberOfArguments">
+            <inheritdoc />
+        </member>
+        <member name="M:Calculation.Model.Functions.Unary.UnaryFunction.#ctor(Resources.IResourceStore)">
+            <summary>
+            Initializes new instance of <see cref="T:Calculation.Model.Functions.Unary.UnaryFunction"/>.
+            </summary>
+            <param name="resourceStore">Store of resources.</param>
+        </member>
+        <member name="M:Calculation.Model.Functions.Unary.UnaryFunction.Calculate">
+            <inheritdoc />
+        </member>
+        <member name="M:Calculation.Model.Functions.Unary.UnaryFunction.Calculate(Calculation.Model.IHasValue)">
+            <summary>
+            Calculates value of unary function using single arguments.
+            </summary>
+            <param name="argument">Function argument.</param>
+            <returns>Value of unary function.</returns>
+        </member>
+        <member name="T:Calculation.Model.IFunction">
+            <summary>
+            Function of several arguments.
+            </summary>
+        </member>
+        <member name="P:Calculation.Model.IFunction.Priority">
+            <summary>
+            Priority of function.
+            Functions with higher priority are calculated earlier.
+            </summary>
+        </member>
+        <member name="P:Calculation.Model.IFunction.NumberOfArguments">
+            <summary>
+            Number of arguments that function uses.
+            </summary>
+        </member>
+        <member name="M:Calculation.Model.IFunction.SetArguments(Calculation.Model.IHasValue[])">
+            <summary>
+            Set arguments of function.
+            </summary>
+            <param name="arguments">Function arguments.</param>
+        </member>
+        <member name="T:Calculation.Model.IHasValue">
+            <summary>
+            Types that have value.
+            </summary>
+        </member>
+        <member name="M:Calculation.Model.IHasValue.GetValue">
+            <summary>
+            Returns value.
+            </summary>
+            <returns>Value.</returns>
+        </member>
+        <member name="T:Calculation.Model.Number">
+            <summary>
+            Simple number.
+            </summary>
+        </member>
+        <member name="M:Calculation.Model.Number.#ctor(System.Decimal)">
+            <summary>
+            Initialize new instance of <see cref="T:Calculation.Model.Number"/>.
+            </summary>
+            <param name="value"></param>
+        </member>
+        <member name="M:Calculation.Model.Number.GetValue">
+            <inheritdoc />
+        </member>
+        <member name="M:Calculation.Model.Number.Equals(System.Object)">
+            <inheritdoc />
+        </member>
+        <member name="M:Calculation.Model.Number.Equals(Calculation.Model.Number)">
+            <inheritdoc />
+        </member>
+        <member name="M:Calculation.Model.Number.GetHashCode">
+            <inheritdoc />
+        </member>
+        <member name="M:Calculation.Model.Number.op_Equality(Calculation.Model.Number,Calculation.Model.Number)">
+            <inheritdoc />
+        </member>
+        <member name="M:Calculation.Model.Number.op_Inequality(Calculation.Model.Number,Calculation.Model.Number)">
+            <inheritdoc />
+        </member>
+        <member name="M:Calculation.Model.Number.ToString">
+            <inheritdoc />
+        </member>
+    </members>
+</doc>

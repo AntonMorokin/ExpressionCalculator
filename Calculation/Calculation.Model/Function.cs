@@ -1,4 +1,5 @@
-﻿using Resources;
+﻿using Common;
+using Resources;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -33,6 +34,7 @@ namespace Calculation.Model
         protected Function(IResourceStore resourceStore)
         {
             ResourceStore = resourceStore;
+            Arguments = ImmutableList<IHasValue>.Empty;
         }
 
         /// <inheritdoc />
@@ -57,6 +59,25 @@ namespace Calculation.Model
         public decimal GetValue()
         {
             return Calculate().GetValue();
+        }
+
+        /// <summary>
+        /// Creates string representation of this object.
+        /// </summary>
+        /// <returns>String representation of this object.</returns>
+        protected abstract OptionalResult<string> Render();
+
+        /// <inheritdoc />
+        public override string ToString()
+        {
+            var result = Render();
+
+            if (result.HasValue)
+            {
+                return result.Value;
+            }
+
+            throw new InvalidOperationException(ResourceStore.GetExceptionMessage("CannotRenderFunction"));
         }
     }
 }

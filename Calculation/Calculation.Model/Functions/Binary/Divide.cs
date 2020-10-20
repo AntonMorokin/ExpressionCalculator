@@ -1,4 +1,5 @@
 ﻿using Calculation.Model.Factories;
+using Common;
 using Resources;
 using System;
 
@@ -38,6 +39,18 @@ namespace Calculation.Model.Functions.Binary
             }
 
             return _numberFactory.CreateNumber(firstValue / secondValue);
+        }
+
+        /// <inheritdoc />
+        protected override OptionalResult<string> Render()
+        {
+            return Arguments.Count switch
+            {
+                0 => OptionalResult<string>.CreateWithResult("/"),
+                1 => OptionalResult<string>.CreateWithResult($"{Arguments[0]} /"),
+                2 => OptionalResult<string>.CreateWithResult($"{Arguments[0]} / {Arguments[1]}"),
+                _ => OptionalResult<string>.CreateEmpty()
+            };
         }
     }
 }

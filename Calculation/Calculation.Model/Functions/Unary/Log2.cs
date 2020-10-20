@@ -1,4 +1,5 @@
 ﻿using Calculation.Model.Factories;
+using Common;
 using Resources;
 using System;
 
@@ -30,6 +31,17 @@ namespace Calculation.Model.Functions.Unary
         {
             decimal value = (decimal)Math.Log2((double)argument.GetValue());
             return _numberFactory.CreateNumber(value);
+        }
+
+        /// <inheritdoc />
+        protected override OptionalResult<string> Render()
+        {
+            return Arguments.Count switch
+            {
+                0 => OptionalResult<string>.CreateWithResult("log2"),
+                1 => OptionalResult<string>.CreateWithResult($"log2({Arguments[0]})"),
+                _ => OptionalResult<string>.CreateEmpty()
+            };
         }
     }
 }

@@ -61,6 +61,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Can not render function..
+        /// </summary>
+        internal static string CannotRenderFunction {
+            get {
+                return ResourceManager.GetString("CannotRenderFunction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Denominator must not be zero..
         /// </summary>
         internal static string DenominatorIsZero {

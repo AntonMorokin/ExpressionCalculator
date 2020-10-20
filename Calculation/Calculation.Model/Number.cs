@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 
 namespace Calculation.Model
 {
@@ -75,5 +76,11 @@ namespace Calculation.Model
         }
 
         #endregion
+
+        /// <inheritdoc />
+        public override string ToString()
+        {
+            return _value.ToString(CultureInfo.CurrentCulture);
+        }
     }
 }
