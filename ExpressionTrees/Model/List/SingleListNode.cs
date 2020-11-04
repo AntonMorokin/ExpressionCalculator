@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ExpressionTrees.Model
+namespace ExpressionTrees.Model.List
 {
     public sealed class SingleListNode<T> : IListNode<T>
     {

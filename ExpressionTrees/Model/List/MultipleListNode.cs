@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 
-namespace ExpressionTrees.Model
+namespace ExpressionTrees.Model.List
 {
     public sealed class MultipleListNode<T> : IListNode<T>
     {

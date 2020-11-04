@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ExpressionTrees.Model
+namespace ExpressionTrees.Model.List
 {
     public interface IListNode<T>
     {

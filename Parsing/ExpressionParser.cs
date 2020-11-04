@@ -1,7 +1,7 @@
 ﻿using Calculation.Model;
 using Calculation.Model.Factories;
 using Calculation.Model.Functions.Binary;
-using ExpressionTrees.Model;
+using ExpressionTrees.Model.List;
 using Resources;
 using System;
 using System.Collections.Generic;
