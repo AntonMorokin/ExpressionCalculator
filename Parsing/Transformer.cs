@@ -24,7 +24,7 @@ namespace Parsing
                     if (!(currentNode.Value is Function currentNodeFunction
                         && nextNode.Value is Function nextNodeFunction))
                     {
-                        throw new InvalidOperationException("Not supported type of root node value.");
+                        throw new NotSupportedException("Not supported type of root node value.");
                     }
 
                     // When priorities of current and next nodes are equal
@@ -52,7 +52,7 @@ namespace Parsing
                 if (!(currentNode.Value is Function currentNodeFunction
                     && nextNode.Value is Function nextNodeFunction))
                 {
-                    throw new InvalidOperationException("Not supported type of root node value.");
+                    throw new NotSupportedException("Not supported type of root node value.");
                 }
 
                 // But merge them depending on their priority.
@@ -131,7 +131,7 @@ namespace Parsing
             if (treeNode.LeftChild is ComplexTreeNode lctn)
             {
                 // Convert braces to tree
-                var newLeftNode = TransformToTree(lctn.Values.OfType<TreeNode>().ToList());
+                var newLeftNode = TransformToTree(lctn.Values.ToList());
                 treeNode.LeftChild = newLeftNode;
             }
             else if (treeNode.LeftChild is TreeNode ltn
@@ -143,7 +143,7 @@ namespace Parsing
             if (treeNode.RightChild is ComplexTreeNode rctn)
             {
                 // Convert braces to tree
-                var newRightNode = TransformToTree(rctn.Values.OfType<TreeNode>().ToList());
+                var newRightNode = TransformToTree(rctn.Values.ToList());
                 treeNode.RightChild = newRightNode;
             }
             else if (treeNode.RightChild is TreeNode rtn

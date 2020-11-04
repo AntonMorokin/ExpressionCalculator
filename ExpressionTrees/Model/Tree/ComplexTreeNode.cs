@@ -4,9 +4,9 @@ namespace ExpressionTrees.Model.Tree
 {
     public sealed class ComplexTreeNode : ITreeNode
     {
-        public IList<ITreeNode> Values { get; }
+        public IList<TreeNode> Values { get; }
 
-        public ComplexTreeNode(IList<ITreeNode> values)
+        public ComplexTreeNode(IList<TreeNode> values)
         {
             Values = values;
         }

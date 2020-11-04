@@ -12,13 +12,14 @@ namespace ExpressionCalculator
     {
         static void Main(string[] args)
         {
+            Console.WriteLine("Type expression:");
             var s = Console.ReadLine();
 
-            var parser = new ExpressionParser(TypeFactory.Get<IResourceStore>(), TypeFactory.Get<INumberFactory>());
+            var parser = new Parser(TypeFactory.Get<IResourceStore>(), TypeFactory.Get<INumberFactory>());
             var list = parser.ParseToSimpleList(s);
 
             var converter = new Converter();
-            var rootList = converter.Convert(list.ToList());
+            var rootList = converter.Convert(list);
 
             var transformer = new Transformer();
             var tree = transformer.TransformToTree(rootList.OfType<TreeNode>().ToList());
