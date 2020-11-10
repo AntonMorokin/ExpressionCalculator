@@ -1,5 +1,4 @@
-﻿using Calculation.Model;
-using ExpressionTrees.Model.Tree;
+﻿using Calculation.Model.Functions.Binary;
 using Parsing.Model;
 using System.Collections.Generic;
 
@@ -9,37 +8,41 @@ namespace Parsing
     {
         public IList<TreeNode> Convert(IList<ListNode> listNodes)
         {
-            var flatTreeNodes = new List<ITreeNode>(16);
+            var flatTreeNodes = new List<TreeNode>(16);
 
             foreach (var listNode in listNodes)
             {
+                var node = new TreeNode
+                {
+                    Value = listNode.MainValue
+                };
+
                 if (listNode.HasSubNodes)
                 {
-                    var values = Convert(listNode.SubNodes);
-                    flatTreeNodes.Add(new ComplexTreeNode(values));
+                    node.SubNodes = Convert(listNode.SubNodes);
                 }
-                else
-                {
-                    flatTreeNodes.Add(new TreeNode(null)
-                    {
-                        Value = listNode.MainValue
-                    });
-                }
+
+                flatTreeNodes.Add(node);
             }
 
-            ITreeNode currentListNode;
+            TreeNode currentListNode;
             var treeNodes = new List<TreeNode>(16);
+
+            // TODO: Temporary
+            if (flatTreeNodes.Count < 2)
+            {
+                return flatTreeNodes;
+            }
 
             for (int i = 0; i < flatTreeNodes.Count; i++)
             {
                 currentListNode = flatTreeNodes[i];
-                if (currentListNode is TreeNode treeNode
-                    && treeNode.Value is Function)
+                if (currentListNode.Value is BinaryFunction)
                 {
-                    treeNode.LeftChild = flatTreeNodes[i - 1];
-                    treeNode.RightChild = flatTreeNodes[i + 1];
+                    currentListNode.LeftChild = flatTreeNodes[i - 1];
+                    currentListNode.RightChild = flatTreeNodes[i + 1];
 
-                    treeNodes.Add(treeNode);
+                    treeNodes.Add(currentListNode);
 
                     i++;
                     continue;

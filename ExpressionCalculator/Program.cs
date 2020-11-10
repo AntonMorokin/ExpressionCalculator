@@ -22,7 +22,7 @@ namespace ExpressionCalculator
             var rootList = converter.Convert(list);
 
             var transformer = new Transformer();
-            var tree = transformer.TransformToTree(rootList.OfType<TreeNode>().ToList());
+            var tree = transformer.TransformToTree(rootList);
 
             var treeConverter = new TreeConverter();
             var expression = treeConverter.Convert(tree);

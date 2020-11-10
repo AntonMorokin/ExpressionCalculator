@@ -1,12 +1,10 @@
-﻿using Calculation.Model;
-using Calculation.Model.Factories;
+﻿using Calculation.Model.Factories;
 using Calculation.Model.Functions.Binary;
 using Calculation.Model.Functions.Unary;
 using Parsing.Model;
 using Resources;
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
 
@@ -18,24 +16,24 @@ namespace Parsing
         private const char CLOSING_BRACE_CHAR = ')';
 
         private readonly INumberFactory _numberFactory;
-        private readonly IDictionary<char, BinaryFunction> _knownBinaryFunctions;
-        private readonly IDictionary<string, UnaryFunction> _knownUnaryFunctions;
+        private readonly IDictionary<char, Func<BinaryFunction>> _knownBinaryFunctions;
+        private readonly IDictionary<string, Func<UnaryFunction>> _knownUnaryFunctions;
 
         public Parser(IResourceStore resourceStore, INumberFactory numberFactory)
         {
             _numberFactory = numberFactory;
 
-            _knownBinaryFunctions = new Dictionary<char, BinaryFunction>
+            _knownBinaryFunctions = new Dictionary<char, Func<BinaryFunction>>
             {
-                { '+', new Plus(resourceStore, _numberFactory) },
-                { '-', new Minus(resourceStore, _numberFactory) },
-                { '*', new Multiply(resourceStore, _numberFactory) },
-                { '/', new Divide(resourceStore, _numberFactory) }
+                { '+', () => new Plus(resourceStore, _numberFactory) },
+                { '-', () => new Minus(resourceStore, _numberFactory) },
+                { '*', () => new Multiply(resourceStore, _numberFactory) },
+                { '/', () => new Divide(resourceStore, _numberFactory) }
             };
 
-            _knownUnaryFunctions = new Dictionary<string, UnaryFunction>
+            _knownUnaryFunctions = new Dictionary<string, Func<UnaryFunction>>
             {
-                { "log2", new Log2(resourceStore, _numberFactory) }
+                { "log2", () => new Log2(resourceStore, _numberFactory) }
             };
         }
 
@@ -80,10 +78,7 @@ namespace Parsing
                     else
                     {
                         var unaryFunctionNode = ParseNode(expressionBeforeBraces);
-                        unaryFunctionNode.SubNodes = new List<ListNode>(1)
-                        {
-                            bracesNode
-                        };
+                        unaryFunctionNode.SubNodes = bracesNode.SubNodes;
 
                         list.Add(unaryFunctionNode);
                     }
@@ -183,11 +178,11 @@ namespace Parsing
             parsedCommand = null;
 
             if (value.Length == 1
-                && _knownBinaryFunctions.TryGetValue(value[0], out var binaryFunction))
+                && _knownBinaryFunctions.TryGetValue(value[0], out var createBinaryFunction))
             {
                 parsedCommand = new ListNode
                 {
-                    MainValue = binaryFunction
+                    MainValue = createBinaryFunction()
                 };
 
                 return true;
@@ -200,11 +195,11 @@ namespace Parsing
         {
             valueToParse = valueToParse?.Trim().TrimEnd(OPENING_BRACE_CHAR);
 
-            if (_knownUnaryFunctions.TryGetValue(valueToParse, out var unaryFunction))
+            if (_knownUnaryFunctions.TryGetValue(valueToParse, out var createUnaryFunction))
             {
                 return new ListNode
                 {
-                    MainValue = unaryFunction
+                    MainValue = createUnaryFunction()
                 };
             }
 
