@@ -1,37 +1,43 @@
-﻿using Calculation.Model;
-using Calculation.Model.Factories;
+﻿using Calculation.Model.Factories;
 using Calculation.Model.Functions.Binary;
-using ExpressionTrees.Model.List;
+using Calculation.Model.Functions.Unary;
+using Parsing.Model;
 using Resources;
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 
 namespace Parsing
 {
-    public sealed class ExpressionParser
+    public sealed class Parser
     {
-        private static readonly IEnumerable<char> __knownOperationChars = new[]
-        {
-            '+', '-', '*', '/'
-        };
-
         private const char OPENING_BRACE_CHAR = '(';
         private const char CLOSING_BRACE_CHAR = ')';
 
-        private readonly IResourceStore _resourceStore;
         private readonly INumberFactory _numberFactory;
+        private readonly IDictionary<char, Func<BinaryFunction>> _knownBinaryFunctions;
+        private readonly IDictionary<string, Func<UnaryFunction>> _knownUnaryFunctions;
 
-        public ExpressionParser(IResourceStore resourceStore, INumberFactory numberFactory)
+        public Parser(IResourceStore resourceStore, INumberFactory numberFactory)
         {
-            _resourceStore = resourceStore;
             _numberFactory = numberFactory;
+
+            _knownBinaryFunctions = new Dictionary<char, Func<BinaryFunction>>
+            {
+                { '+', () => new Plus(resourceStore, _numberFactory) },
+                { '-', () => new Minus(resourceStore, _numberFactory) },
+                { '*', () => new Multiply(resourceStore, _numberFactory) },
+                { '/', () => new Divide(resourceStore, _numberFactory) }
+            };
+
+            _knownUnaryFunctions = new Dictionary<string, Func<UnaryFunction>>
+            {
+                { "log2", () => new Log2(resourceStore, _numberFactory) }
+            };
         }
 
-        public IReadOnlyCollection<IListNode<IHasValue>> ParseToSimpleList(string expression)
+        public IList<ListNode> ParseToSimpleList(string expression)
         {
             expression = expression?.Trim();
 
@@ -40,7 +46,7 @@ namespace Parsing
                 throw new ArgumentNullException(nameof(expression));
             }
 
-            var list = new List<IListNode<IHasValue>>(16);
+            var list = new List<ListNode>(16);
 
             char currentChar;
             int lastSignificantCharIndex = 0;
@@ -49,19 +55,38 @@ namespace Parsing
             for (i = 0; i < expression.Length; i++)
             {
                 currentChar = expression[i];
+                if (char.IsWhiteSpace(currentChar))
+                {
+                    continue;
+                }
+
                 if (currentChar == OPENING_BRACE_CHAR)
                 {
-                    (int lastIndex, var bracesNode) = ParseBraces(expression, i + 1);
+                    var expressionBeforeBraces = expression[lastSignificantCharIndex..i];
 
-                    list.Add(bracesNode);
+                    (int lastIndex, var bracesNode) = ExtractBraces(expression, i);
 
                     i = lastIndex;
                     lastSignificantCharIndex = i + 1;
 
+                    if (string.IsNullOrWhiteSpace(expressionBeforeBraces))
+                    {
+                        list.Add(bracesNode);
+                    }
+                    // We found opening brace, but before it and last command something exists.
+                    // Assume this is unary function, i.e. 1 + log2(8), and parse it.
+                    else
+                    {
+                        var unaryFunctionNode = ParseNode(expressionBeforeBraces);
+                        unaryFunctionNode.SubNodes = bracesNode.SubNodes;
+
+                        list.Add(unaryFunctionNode);
+                    }
+
                     continue;
                 }
 
-                if (__knownOperationChars.Contains(currentChar))
+                if (_knownBinaryFunctions.Keys.Contains(currentChar))
                 {
                     // When false it means we just parsed expression in braces.
                     // Before it there is no value - only function.
@@ -87,16 +112,15 @@ namespace Parsing
                 list.Add(ParseNode(valueToParse));
             }
 
-            return list.ToImmutableList();
+            return list;
         }
 
-        private (int lastIndex, IListNode<IHasValue> node) ParseBraces(string expression, int startIndex)
+        private (int lastIndex, ListNode node) ExtractBraces(string expression, int startIndex)
         {
             int nestingLevel = 0;
-            string expressionInBraces = string.Empty;
             char currentChar;
 
-            for (int i = startIndex; i < expression.Length; i++)
+            for (int i = startIndex + 1; i < expression.Length; i++)
             {
                 currentChar = expression[i];
 
@@ -116,43 +140,70 @@ namespace Parsing
                 if (currentChar == CLOSING_BRACE_CHAR
                     && nestingLevel == 0)
                 {
-                    expressionInBraces = expression[startIndex..i];
-                    var nodes = ParseToSimpleList(expressionInBraces);
+                    string expressionInBraces = expression[(startIndex + 1)..i];
+                    var subNodes = ParseToSimpleList(expressionInBraces);
 
-                    return (i, new MultipleListNode<IHasValue>(nodes));
+                    var braceNode = new ListNode
+                    {
+                        SubNodes = subNodes.ToList()
+                    };
+
+                    return (i, braceNode);
                 }
             }
 
             throw new InvalidOperationException($"Did not find closing brace from {startIndex}: {expression}");
         }
 
-        private IListNode<IHasValue> ParseNode(string valueToParse)
+        private ListNode ParseNode(string valueToParse)
         {
-            var node = new SingleListNode<IHasValue>();
-
-            if (valueToParse.Length == 1)
+            if (decimal.TryParse(valueToParse, NumberStyles.Any, CultureInfo.CurrentCulture, out var number))
             {
-                char @char = valueToParse[0];
-                switch (@char)
+                return new ListNode
                 {
-                    case '+':
-                        node.Value = new Plus(_resourceStore, _numberFactory);
-                        return node;
-                    case '-':
-                        node.Value = new Minus(_resourceStore, _numberFactory);
-                        return node;
-                    case '*':
-                        node.Value = new Multiply(_resourceStore, _numberFactory);
-                        return node;
-                    case '/':
-                        node.Value = new Divide(_resourceStore, _numberFactory);
-                        return node;
-                }
+                    MainValue = _numberFactory.CreateNumber(number)
+                };
             }
-            
-            node.Value = _numberFactory.CreateNumber(decimal.Parse(valueToParse, CultureInfo.CurrentCulture));
 
-            return node;
+            if (TryParseBinaryFunction(valueToParse, out var commandNode))
+            {
+                return commandNode;
+            }
+
+            return ParseUnaryFunction(valueToParse);
+        }
+
+        private bool TryParseBinaryFunction(string value, out ListNode parsedCommand)
+        {
+            parsedCommand = null;
+
+            if (value.Length == 1
+                && _knownBinaryFunctions.TryGetValue(value[0], out var createBinaryFunction))
+            {
+                parsedCommand = new ListNode
+                {
+                    MainValue = createBinaryFunction()
+                };
+
+                return true;
+            }
+
+            return false;
+        }
+
+        private ListNode ParseUnaryFunction(string valueToParse)
+        {
+            valueToParse = valueToParse?.Trim().TrimEnd(OPENING_BRACE_CHAR);
+
+            if (_knownUnaryFunctions.TryGetValue(valueToParse, out var createUnaryFunction))
+            {
+                return new ListNode
+                {
+                    MainValue = createUnaryFunction()
+                };
+            }
+
+            throw new NotSupportedException($"Unknown unary function: {valueToParse}");
         }
     }
 }

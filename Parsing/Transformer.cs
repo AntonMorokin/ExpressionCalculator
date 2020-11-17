@@ -1,5 +1,6 @@
 ﻿using Calculation.Model;
-using ExpressionTrees.Model.Tree;
+using Calculation.Model.Functions.Binary;
+using Parsing.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,10 +22,10 @@ namespace Parsing
                 {
                     nextNode = treeNodes[i];
 
-                    if (!(currentNode.Value is Function currentNodeFunction
-                        && nextNode.Value is Function nextNodeFunction))
+                    if (!(currentNode.Value is BinaryFunction currentNodeFunction
+                        && nextNode.Value is BinaryFunction nextNodeFunction))
                     {
-                        throw new InvalidOperationException("Not supported type of root node value.");
+                        throw new NotSupportedException("Not supported type of root node value.");
                     }
 
                     // When priorities of current and next nodes are equal
@@ -49,10 +50,10 @@ namespace Parsing
                 currentNode = treeNodes[0];
                 nextNode = treeNodes[1];
 
-                if (!(currentNode.Value is Function currentNodeFunction
-                    && nextNode.Value is Function nextNodeFunction))
+                if (!(currentNode.Value is BinaryFunction currentNodeFunction
+                    && nextNode.Value is BinaryFunction nextNodeFunction))
                 {
-                    throw new InvalidOperationException("Not supported type of root node value.");
+                    throw new NotSupportedException("Not supported type of root node value.");
                 }
 
                 // But merge them depending on their priority.
@@ -69,88 +70,101 @@ namespace Parsing
 
             }
 
-            ConvertBracesToTree(treeNodes[0]);
+            ConvertSubNodesToTree(treeNodes[0]);
 
             return treeNodes[0];
         }
 
-        private void MergeNodeToLeftSide(TreeNode root, ITreeNode node)
+        private void MergeNodeToLeftSide(TreeNode root, TreeNode node)
         {
             var currentNode = root;
-            while (!IsLeafFromLeftSide(currentNode.LeftChild))
+            while (!LeftChildIsLeaf(currentNode.LeftChild))
             {
-                currentNode = (TreeNode)currentNode.LeftChild;
+                currentNode = currentNode.LeftChild;
             }
 
             currentNode.LeftChild = node;
         }
 
-        private bool IsLeafFromLeftSide(ITreeNode treeNode)
+        private bool LeftChildIsLeaf(TreeNode treeNode)
         {
-            if (treeNode is ComplexTreeNode)
+            if (treeNode.HasSubNodes)
             {
                 return true;
             }
 
-            if (treeNode is TreeNode tn)
-            {
-                return tn.LeftChild == null;
-            }
-
-            throw new InvalidOperationException("Unknown tree node type.");
+            return treeNode.LeftChild == null;
         }
 
-        private void MergeNodeToRightSide(TreeNode root, ITreeNode node)
+        private void MergeNodeToRightSide(TreeNode root, TreeNode node)
         {
             var currentNode = root;
-            while (!IsLeafFromRightSide(currentNode.RightChild))
+            while (!RightChildIsLeaf(currentNode.RightChild))
             {
-                currentNode = (TreeNode)currentNode.RightChild;
+                currentNode = currentNode.RightChild;
             }
 
             currentNode.RightChild = node;
         }
 
-        private bool IsLeafFromRightSide(ITreeNode treeNode)
+        private bool RightChildIsLeaf(TreeNode treeNode)
         {
-            if (treeNode is ComplexTreeNode)
+            if (treeNode.HasSubNodes)
             {
                 return true;
             }
 
-            if (treeNode is TreeNode tn)
-            {
-                return tn.RightChild == null;
-            }
-
-            throw new InvalidOperationException("Unknown tree node type.");
+            return treeNode.RightChild == null;
         }
 
-        private void ConvertBracesToTree(TreeNode treeNode)
+        private void ConvertSubNodesToTree(TreeNode treeNode)
         {
-            if (treeNode.LeftChild is ComplexTreeNode lctn)
+            if (treeNode.LeftChild != null)
             {
-                // Convert braces to tree
-                var newLeftNode = TransformToTree(lctn.Values.OfType<TreeNode>().ToList());
-                treeNode.LeftChild = newLeftNode;
-            }
-            else if (treeNode.LeftChild is TreeNode ltn
-                && ltn.Value is Function)
-            {
-                ConvertBracesToTree(ltn);
+                var leftChild = treeNode.LeftChild;
+
+                if (leftChild.HasSubNodes)
+                {
+                    var newLeftNode = TransformToTree(leftChild.SubNodes);
+                    if (leftChild.Value == null)
+                    {
+                        treeNode.LeftChild = newLeftNode;
+                    }
+                    else
+                    {
+                        leftChild.LeftChild = newLeftNode;
+                        leftChild.SubNodes = null;
+                    }
+                }
+                else if (leftChild.Value is Function)
+                {
+                    ConvertSubNodesToTree(leftChild);
+                }
             }
 
-            if (treeNode.RightChild is ComplexTreeNode rctn)
+            if (treeNode.RightChild != null)
             {
-                // Convert braces to tree
-                var newRightNode = TransformToTree(rctn.Values.OfType<TreeNode>().ToList());
-                treeNode.RightChild = newRightNode;
+                var rightChild = treeNode.RightChild;
+
+                if (rightChild.HasSubNodes)
+                {
+                    var newRightNode = TransformToTree(rightChild.SubNodes);
+                    if (rightChild.Value == null)
+                    {
+                        treeNode.RightChild = newRightNode;
+                    }
+                    else
+                    {
+                        rightChild.LeftChild = newRightNode;
+                        rightChild.SubNodes = null;
+                    }
+                }
+                else if (rightChild.Value is Function)
+                {
+                    ConvertSubNodesToTree(rightChild);
+                }
             }
-            else if (treeNode.RightChild is TreeNode rtn
-                && rtn.Value is Function)
-            {
-                ConvertBracesToTree(rtn);
-            }
+            
         }
     }
 }

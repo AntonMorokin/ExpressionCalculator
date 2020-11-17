@@ -1,7 +1,7 @@
 ﻿using Calculation.Model;
 using Calculation.Model.Functions.Binary;
 using Calculation.Model.Functions.Unary;
-using ExpressionTrees.Model.Tree;
+using Parsing.Model;
 using System;
 
 namespace Parsing
@@ -19,7 +19,7 @@ namespace Parsing
 
             if (value is UnaryFunction uf)
             {
-                var unaryFunctionValue = Convert((TreeNode)treeNode.LeftChild);
+                var unaryFunctionValue = Convert(treeNode.LeftChild);
                 
                 uf.SetArguments(unaryFunctionValue);
                 
@@ -28,8 +28,8 @@ namespace Parsing
 
             if (value is BinaryFunction bf)
             {
-                var firstValue = Convert((TreeNode)treeNode.LeftChild);
-                var secondValue = Convert((TreeNode)treeNode.RightChild);
+                var firstValue = Convert(treeNode.LeftChild);
+                var secondValue = Convert(treeNode.RightChild);
 
                 bf.SetArguments(firstValue, secondValue);
 
