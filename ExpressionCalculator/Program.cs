@@ -1,10 +1,7 @@
-﻿using Calculation.Model.Factories;
-using Common;
-using ExpressionTrees.Model.Tree;
-using Parsing;
-using Resources;
+﻿using Common;
+using Processing.Symantics;
+using Processing.Syntax;
 using System;
-using System.Linq;
 
 namespace ExpressionCalculator
 {
@@ -15,17 +12,14 @@ namespace ExpressionCalculator
             Console.WriteLine("Type expression:");
             var s = Console.ReadLine();
 
-            var parser = new Parser(TypeFactory.Get<IResourceStore>(), TypeFactory.Get<INumberFactory>());
-            var list = parser.ParseToSimpleList(s);
+            var syntaxParser = TypeFactory.Get<ISyntaxTokenParser>();
+            var symanticsTransformer = TypeFactory.Get<ISymanticsTransformer>();
+            var symanticAnalyzer = TypeFactory.Get<ISymanticAnalyzer>();
 
-            var converter = new Converter();
-            var rootList = converter.Convert(list);
-
-            var transformer = new Transformer();
-            var tree = transformer.TransformToTree(rootList);
-
-            var treeConverter = new TreeConverter();
-            var expression = treeConverter.Convert(tree);
+            var syntaxTokens = syntaxParser.ParseSyntaxTokens(s);
+            var symanticNodes = symanticsTransformer.TransformSyntaxToSymantics(syntaxTokens);
+            var tree = symanticAnalyzer.BuildSymanticTree(symanticNodes);
+            var expression = symanticsTransformer.TransformSymanticTreeToCalculationModel(tree);
 
             Console.WriteLine($"Result = {expression.GetValue()}");
         }

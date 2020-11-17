@@ -6,7 +6,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Calculation\Calculation.Model\Calculation.Model.csproj" />
-    <ProjectReference Include="..\ExpressionTrees\ExpressionTrees.csproj" />
+    <ProjectReference Include="..\Processing\Processing.Symantics\Processing.Symantics.csproj" />
+    <ProjectReference Include="..\Processing\Processing.Syntax\Processing.Syntax.csproj" />
   </ItemGroup>
 
 </Project>

@@ -17,6 +17,42 @@
         }
       ],
       "instanceScope": "singleinstance"
+    },
+    {
+      "type": "Processing.Syntax.SyntaxTokenFactory, Processing.Syntax",
+      "services": [
+        {
+          "type": "Processing.Syntax.ISyntaxTokenFactory, Processing.Syntax"
+        }
+      ],
+      "instanceScope": "singleinstance"
+    },
+    {
+      "type": "Processing.Syntax.SyntaxTokenParser, Processing.Syntax",
+      "services": [
+        {
+          "type": "Processing.Syntax.ISyntaxTokenParser, Processing.Syntax"
+        }
+      ],
+      "instanceScope": "singleinstance"
+    },
+    {
+      "type": "Processing.Symantics.SymanticsTransformer, Processing.Symantics",
+      "services": [
+        {
+          "type": "Processing.Symantics.ISymanticsTransformer, Processing.Symantics"
+        }
+      ],
+      "instanceScope": "singleinstance"
+    },
+    {
+      "type": "Processing.Symantics.SymanticAnalyzer, Processing.Symantics",
+      "services": [
+        {
+          "type": "Processing.Symantics.ISymanticAnalyzer, Processing.Symantics"
+        }
+      ],
+      "instanceScope": "singleinstance"
     }
   ]
 }

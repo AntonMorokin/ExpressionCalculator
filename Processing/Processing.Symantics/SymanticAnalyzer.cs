@@ -1,26 +1,25 @@
 ﻿using Calculation.Model;
 using Calculation.Model.Functions.Binary;
-using Parsing.Model;
+using Processing.Symantics.Model;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
-namespace Parsing
+namespace Processing.Symantics
 {
-    public sealed class Transformer
+    internal sealed class SymanticAnalyzer : ISymanticAnalyzer
     {
-        public TreeNode TransformToTree(IList<TreeNode> treeNodes)
+        public SymanticNode BuildSymanticTree(IList<SymanticNode> symanticNodes)
         {
-            TreeNode currentNode = treeNodes[0];
-            TreeNode nextNode;
+            SymanticNode currentNode = symanticNodes[0];
+            SymanticNode nextNode;
             bool multipleLineExists = false;
 
             do
             {
                 // Step over all nodes.
-                for (int i = 1; i < treeNodes.Count; i++)
+                for (int i = 1; i < symanticNodes.Count; i++)
                 {
-                    nextNode = treeNodes[i];
+                    nextNode = symanticNodes[i];
 
                     if (!(currentNode.Value is BinaryFunction currentNodeFunction
                         && nextNode.Value is BinaryFunction nextNodeFunction))
@@ -33,7 +32,7 @@ namespace Parsing
                     {
                         // Then merge current node to leftmost node of next node.
                         MergeNodeToLeftSide(nextNode, currentNode);
-                        treeNodes.Remove(currentNode);
+                        symanticNodes.Remove(currentNode);
                         i--;
                     }
 
@@ -45,10 +44,10 @@ namespace Parsing
 
             // When we steped over all nodes and did not make any swap
             // Then step over all nodes one more time
-            while (treeNodes.Count > 1)
+            while (symanticNodes.Count > 1)
             {
-                currentNode = treeNodes[0];
-                nextNode = treeNodes[1];
+                currentNode = symanticNodes[0];
+                nextNode = symanticNodes[1];
 
                 if (!(currentNode.Value is BinaryFunction currentNodeFunction
                     && nextNode.Value is BinaryFunction nextNodeFunction))
@@ -60,22 +59,22 @@ namespace Parsing
                 if (currentNodeFunction.Priority < nextNodeFunction.Priority)
                 {
                     MergeNodeToRightSide(currentNode, nextNode);
-                    treeNodes.Remove(nextNode);
+                    symanticNodes.Remove(nextNode);
                 }
                 else
                 {
                     MergeNodeToLeftSide(nextNode, currentNode);
-                    treeNodes.Remove(currentNode);
+                    symanticNodes.Remove(currentNode);
                 }
 
             }
 
-            ConvertSubNodesToTree(treeNodes[0]);
+            ConvertSubNodesToTree(symanticNodes[0]);
 
-            return treeNodes[0];
+            return symanticNodes[0];
         }
 
-        private void MergeNodeToLeftSide(TreeNode root, TreeNode node)
+        private void MergeNodeToLeftSide(SymanticNode root, SymanticNode node)
         {
             var currentNode = root;
             while (!LeftChildIsLeaf(currentNode.LeftChild))
@@ -86,17 +85,17 @@ namespace Parsing
             currentNode.LeftChild = node;
         }
 
-        private bool LeftChildIsLeaf(TreeNode treeNode)
+        private bool LeftChildIsLeaf(SymanticNode SymanticToken)
         {
-            if (treeNode.HasSubNodes)
+            if (SymanticToken.HasSubNodes)
             {
                 return true;
             }
 
-            return treeNode.LeftChild == null;
+            return SymanticToken.LeftChild == null;
         }
 
-        private void MergeNodeToRightSide(TreeNode root, TreeNode node)
+        private void MergeNodeToRightSide(SymanticNode root, SymanticNode node)
         {
             var currentNode = root;
             while (!RightChildIsLeaf(currentNode.RightChild))
@@ -107,28 +106,28 @@ namespace Parsing
             currentNode.RightChild = node;
         }
 
-        private bool RightChildIsLeaf(TreeNode treeNode)
+        private bool RightChildIsLeaf(SymanticNode SymanticToken)
         {
-            if (treeNode.HasSubNodes)
+            if (SymanticToken.HasSubNodes)
             {
                 return true;
             }
 
-            return treeNode.RightChild == null;
+            return SymanticToken.RightChild == null;
         }
 
-        private void ConvertSubNodesToTree(TreeNode treeNode)
+        private void ConvertSubNodesToTree(SymanticNode SymanticToken)
         {
-            if (treeNode.LeftChild != null)
+            if (SymanticToken.LeftChild != null)
             {
-                var leftChild = treeNode.LeftChild;
+                var leftChild = SymanticToken.LeftChild;
 
                 if (leftChild.HasSubNodes)
                 {
-                    var newLeftNode = TransformToTree(leftChild.SubNodes);
+                    var newLeftNode = BuildSymanticTree(leftChild.SubNodes);
                     if (leftChild.Value == null)
                     {
-                        treeNode.LeftChild = newLeftNode;
+                        SymanticToken.LeftChild = newLeftNode;
                     }
                     else
                     {
@@ -142,16 +141,16 @@ namespace Parsing
                 }
             }
 
-            if (treeNode.RightChild != null)
+            if (SymanticToken.RightChild != null)
             {
-                var rightChild = treeNode.RightChild;
+                var rightChild = SymanticToken.RightChild;
 
                 if (rightChild.HasSubNodes)
                 {
-                    var newRightNode = TransformToTree(rightChild.SubNodes);
+                    var newRightNode = BuildSymanticTree(rightChild.SubNodes);
                     if (rightChild.Value == null)
                     {
-                        treeNode.RightChild = newRightNode;
+                        SymanticToken.RightChild = newRightNode;
                     }
                     else
                     {
@@ -164,7 +163,7 @@ namespace Parsing
                     ConvertSubNodesToTree(rightChild);
                 }
             }
-            
+
         }
     }
 }
