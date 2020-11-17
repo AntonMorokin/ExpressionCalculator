@@ -7,7 +7,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj" />
-    <ProjectReference Include="..\Parsing\Parsing.csproj" />
     <ProjectReference Include="..\Processing\Processing.Syntax\Processing.Syntax.csproj" />
   </ItemGroup>
 
