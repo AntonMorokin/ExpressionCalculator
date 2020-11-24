@@ -35,11 +35,11 @@ namespace Processing.Syntax
             };
         }
 
-        public SyntaxToken ParseToken(string valueToParse)
+        public SyntaxTokenOld ParseToken(string valueToParse)
         {
             if (decimal.TryParse(valueToParse, NumberStyles.Any, CultureInfo.CurrentCulture, out var number))
             {
-                return new SyntaxToken
+                return new SyntaxTokenOld
                 {
                     MainValue = _numberFactory.CreateNumber(number)
                 };
@@ -53,14 +53,14 @@ namespace Processing.Syntax
             return ParseUnaryFunction(valueToParse);
         }
 
-        private bool TryParseBinaryFunction(string value, out SyntaxToken parsedToken)
+        private bool TryParseBinaryFunction(string value, out SyntaxTokenOld parsedToken)
         {
             parsedToken = null;
 
             if (value.Length == 1
                 && _knownBinaryFunctions.TryGetValue(value[0], out var createBinaryFunction))
             {
-                parsedToken = new SyntaxToken
+                parsedToken = new SyntaxTokenOld
                 {
                     MainValue = createBinaryFunction()
                 };
@@ -71,11 +71,11 @@ namespace Processing.Syntax
             return false;
         }
 
-        private SyntaxToken ParseUnaryFunction(string valueToParse)
+        private SyntaxTokenOld ParseUnaryFunction(string valueToParse)
         {
             if (_knownUnaryFunctions.TryGetValue(valueToParse, out var createUnaryFunction))
             {
-                return new SyntaxToken
+                return new SyntaxTokenOld
                 {
                     MainValue = createUnaryFunction()
                 };

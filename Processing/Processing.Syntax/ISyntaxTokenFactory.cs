@@ -7,6 +7,6 @@ namespace Processing.Syntax
     {
         IEnumerable<char> KnownBinaryFunctions { get; }
 
-        SyntaxToken ParseToken(string token);
+        SyntaxTokenOld ParseToken(string token);
     }
 }

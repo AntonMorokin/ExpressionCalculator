@@ -5,6 +5,6 @@ namespace Processing.Symantics
 {
     public interface ISymanticAnalyzer
     {
-        SymanticNode BuildSymanticTree(IList<SymanticNode> symanticNodes);
+        SymanticNodeOld BuildSymanticTree(IList<SymanticNodeOld> symanticNodes);
     }
 }

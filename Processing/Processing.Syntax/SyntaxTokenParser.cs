@@ -17,7 +17,7 @@ namespace Processing.Syntax
             _syntaxTokenFactory = syntaxTokenFactory;
         }
 
-        public IList<SyntaxToken> ParseSyntaxTokens(string expression)
+        public IList<SyntaxTokenOld> ParseSyntaxTokens(string expression)
         {
             expression = expression?.Trim();
 
@@ -26,7 +26,7 @@ namespace Processing.Syntax
                 throw new ArgumentNullException(nameof(expression));
             }
 
-            var list = new List<SyntaxToken>(16);
+            var list = new List<SyntaxTokenOld>(16);
 
             char currentChar;
             int lastSignificantCharIndex = 0;
@@ -97,7 +97,7 @@ namespace Processing.Syntax
             return list;
         }
 
-        private (int lastIndex, SyntaxToken node) ExtractBraces(string expression, int startIndex)
+        private (int lastIndex, SyntaxTokenOld node) ExtractBraces(string expression, int startIndex)
         {
             int nestingLevel = 0;
             char currentChar;
@@ -125,7 +125,7 @@ namespace Processing.Syntax
                     string expressionInBraces = expression[(startIndex + 1)..i];
                     var subNodes = ParseSyntaxTokens(expressionInBraces);
 
-                    var braceNode = new SyntaxToken
+                    var braceNode = new SyntaxTokenOld
                     {
                         SubTokens = subNodes.ToList()
                     };

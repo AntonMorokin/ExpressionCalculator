@@ -10,13 +10,13 @@ namespace Processing.Symantics
 {
     internal sealed class SymanticsTransformer : ISymanticsTransformer
     {
-        public IList<SymanticNode> TransformSyntaxToSymantics(IList<SyntaxToken> syntaxTokens)
+        public IList<SymanticNodeOld> TransformSyntaxToSymantics(IList<SyntaxTokenOld> syntaxTokens)
         {
-            var flatSymanticTokens = new List<SymanticNode>(16);
+            var flatSymanticTokens = new List<SymanticNodeOld>(16);
 
             foreach (var listNode in syntaxTokens)
             {
-                var node = new SymanticNode
+                var node = new SymanticNodeOld
                 {
                     Value = listNode.MainValue
                 };
@@ -29,8 +29,8 @@ namespace Processing.Symantics
                 flatSymanticTokens.Add(node);
             }
 
-            SymanticNode currentListNode;
-            var SymanticTokens = new List<SymanticNode>(16);
+            SymanticNodeOld currentListNode;
+            var SymanticTokens = new List<SymanticNodeOld>(16);
 
             // TODO: Temporary
             if (flatSymanticTokens.Count < 2)
@@ -56,7 +56,7 @@ namespace Processing.Symantics
             return SymanticTokens;
         }
 
-        public IHasValue TransformSymanticTreeToCalculationModel(SymanticNode symanticTree)
+        public IHasValue TransformSymanticTreeToCalculationModel(SymanticNodeOld symanticTree)
         {
             var value = symanticTree.Value;
 

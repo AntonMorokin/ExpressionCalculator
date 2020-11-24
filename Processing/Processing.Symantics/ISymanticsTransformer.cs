@@ -7,8 +7,8 @@ namespace Processing.Symantics
 {
     public interface ISymanticsTransformer
     {
-        IList<SymanticNode> TransformSyntaxToSymantics(IList<SyntaxToken> syntaxTokens);
+        IList<SymanticNodeOld> TransformSyntaxToSymantics(IList<SyntaxTokenOld> syntaxTokens);
 
-        IHasValue TransformSymanticTreeToCalculationModel(SymanticNode symanticTree);
+        IHasValue TransformSymanticTreeToCalculationModel(SymanticNodeOld symanticTree);
     }
 }

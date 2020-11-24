@@ -8,10 +8,10 @@ namespace Processing.Symantics
 {
     internal sealed class SymanticAnalyzer : ISymanticAnalyzer
     {
-        public SymanticNode BuildSymanticTree(IList<SymanticNode> symanticNodes)
+        public SymanticNodeOld BuildSymanticTree(IList<SymanticNodeOld> symanticNodes)
         {
-            SymanticNode currentNode = symanticNodes[0];
-            SymanticNode nextNode;
+            SymanticNodeOld currentNode = symanticNodes[0];
+            SymanticNodeOld nextNode;
             bool multipleLineExists = false;
 
             do
@@ -74,7 +74,7 @@ namespace Processing.Symantics
             return symanticNodes[0];
         }
 
-        private void MergeNodeToLeftSide(SymanticNode root, SymanticNode node)
+        private void MergeNodeToLeftSide(SymanticNodeOld root, SymanticNodeOld node)
         {
             var currentNode = root;
             while (!LeftChildIsLeaf(currentNode.LeftChild))
@@ -85,7 +85,7 @@ namespace Processing.Symantics
             currentNode.LeftChild = node;
         }
 
-        private bool LeftChildIsLeaf(SymanticNode SymanticToken)
+        private bool LeftChildIsLeaf(SymanticNodeOld SymanticToken)
         {
             if (SymanticToken.HasSubNodes)
             {
@@ -95,7 +95,7 @@ namespace Processing.Symantics
             return SymanticToken.LeftChild == null;
         }
 
-        private void MergeNodeToRightSide(SymanticNode root, SymanticNode node)
+        private void MergeNodeToRightSide(SymanticNodeOld root, SymanticNodeOld node)
         {
             var currentNode = root;
             while (!RightChildIsLeaf(currentNode.RightChild))
@@ -106,7 +106,7 @@ namespace Processing.Symantics
             currentNode.RightChild = node;
         }
 
-        private bool RightChildIsLeaf(SymanticNode SymanticToken)
+        private bool RightChildIsLeaf(SymanticNodeOld SymanticToken)
         {
             if (SymanticToken.HasSubNodes)
             {
@@ -116,7 +116,7 @@ namespace Processing.Symantics
             return SymanticToken.RightChild == null;
         }
 
-        private void ConvertSubNodesToTree(SymanticNode SymanticToken)
+        private void ConvertSubNodesToTree(SymanticNodeOld SymanticToken)
         {
             if (SymanticToken.LeftChild != null)
             {
