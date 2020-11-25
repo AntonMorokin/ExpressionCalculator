@@ -4,6 +4,33 @@
         <name>Calculation.Model</name>
     </assembly>
     <members>
+        <member name="T:Calculation.Model.Factories.CalculationObjectFactory">
+            <summary>
+            Factory operational model objects.
+            </summary>
+        </member>
+        <member name="M:Calculation.Model.Factories.CalculationObjectFactory.#ctor(Calculation.Model.Factories.INumberFactory,Resources.IResourceStore)">
+            <summary>
+            Initializes new instance of <see cref="T:Calculation.Model.Factories.CalculationObjectFactory"/>.
+            </summary>
+            <param name="numberFactory">Factory of numbers.</param>
+            <param name="resourceStore">Store of resources.</param>
+        </member>
+        <member name="M:Calculation.Model.Factories.CalculationObjectFactory.Create(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="T:Calculation.Model.Factories.ICalculationObjectFactory">
+            <summary>
+            Factory operational model objects.
+            </summary>
+        </member>
+        <member name="M:Calculation.Model.Factories.ICalculationObjectFactory.Create(System.String)">
+            <summary>
+            Create operational object by its presentation.
+            </summary>
+            <param name="value">Operational object presentation.</param>
+            <returns>Operational (calculation) object.</returns>
+        </member>
         <member name="T:Calculation.Model.Factories.INumberFactory">
             <summary>
             Factory of numbers.

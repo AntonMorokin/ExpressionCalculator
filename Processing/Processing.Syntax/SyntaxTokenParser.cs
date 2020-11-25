@@ -57,10 +57,10 @@ namespace Processing.Syntax
                     // Assume this is unary function, i.e. 1 + log2(8), and parse it.
                     else
                     {
-                        var unaryFunctionNode = _syntaxTokenFactory.ParseToken(
+                        var unaryFunctionNode = (UnaryFunctionSyntaxToken)_syntaxTokenFactory.ParseToken(
                             expressionBeforeBraces.Trim().TrimEnd(OPENING_BRACE_CHAR));
 
-                        unaryFunctionNode.SubTokens = bracesNode.SubTokens;
+                        unaryFunctionNode.Braces = bracesNode;
 
                         list.Add(unaryFunctionNode);
                     }
@@ -97,7 +97,7 @@ namespace Processing.Syntax
             return list;
         }
 
-        private (int lastIndex, SyntaxToken node) ExtractBraces(string expression, int startIndex)
+        private (int lastIndex, BracesSyntaxToken node) ExtractBraces(string expression, int startIndex)
         {
             int nestingLevel = 0;
             char currentChar;
@@ -125,10 +125,7 @@ namespace Processing.Syntax
                     string expressionInBraces = expression[(startIndex + 1)..i];
                     var subNodes = ParseSyntaxTokens(expressionInBraces);
 
-                    var braceNode = new SyntaxToken
-                    {
-                        SubTokens = subNodes.ToList()
-                    };
+                    var braceNode = new BracesSyntaxToken(subNodes);
 
                     return (i, braceNode);
                 }

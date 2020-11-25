@@ -1,14 +1,15 @@
-﻿using Calculation.Model;
-using System.Collections.Generic;
-
-namespace Processing.Syntax.Model
+﻿namespace Processing.Syntax.Model
 {
     public class SyntaxToken
     {
-        public IHasValue MainValue { get; set; }
+        public SyntaxTokenTypes Type { get; }
 
-        public IList<SyntaxToken> SubTokens { get; set; }
+        public string Value { get; }
 
-        public bool HasSubTokens => (SubTokens?.Count ?? 0) > 0;
+        public SyntaxToken(SyntaxTokenTypes type, string value)
+        {
+            Type = type;
+            Value = value;
+        }
     }
 }

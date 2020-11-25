@@ -1,6 +1,4 @@
-﻿using Calculation.Model;
-using Calculation.Model.Functions.Binary;
-using Processing.Symantics.Model;
+﻿using Processing.Symantics.Model;
 using System;
 using System.Collections.Generic;
 
@@ -10,6 +8,8 @@ namespace Processing.Symantics
     {
         public SymanticNode BuildSymanticTree(IList<SymanticNode> symanticNodes)
         {
+            // TODO: maybe I need to cope input list to not affect callers.
+
             SymanticNode currentNode = symanticNodes[0];
             SymanticNode nextNode;
             bool multipleLineExists = false;
@@ -21,17 +21,21 @@ namespace Processing.Symantics
                 {
                     nextNode = symanticNodes[i];
 
-                    if (!(currentNode.Value is BinaryFunction currentNodeFunction
-                        && nextNode.Value is BinaryFunction nextNodeFunction))
+                    // TODO: code is duplicated and can be moved to the method.
+                    if (!(currentNode.Type == SymanticNodeTypes.BinaryFunction
+                        && nextNode.Type == SymanticNodeTypes.BinaryFunction))
                     {
-                        throw new NotSupportedException("Not supported type of root node value.");
+                        throw new NotSupportedException("Not supported type of symantic nodes.");
                     }
+
+                    var currentNodeFunction = (BinaryFunctionSymanticNode)currentNode;
+                    var nextNodeFunction = (BinaryFunctionSymanticNode)nextNode;
 
                     // When priorities of current and next nodes are equal
                     if (currentNodeFunction.Priority == nextNodeFunction.Priority)
                     {
                         // Then merge current node to leftmost node of next node.
-                        MergeNodeToLeftSide(nextNode, currentNode);
+                        MergeNodeToLeftSide(nextNodeFunction, currentNodeFunction);
                         symanticNodes.Remove(currentNode);
                         i--;
                     }
@@ -49,121 +53,103 @@ namespace Processing.Symantics
                 currentNode = symanticNodes[0];
                 nextNode = symanticNodes[1];
 
-                if (!(currentNode.Value is BinaryFunction currentNodeFunction
-                    && nextNode.Value is BinaryFunction nextNodeFunction))
+                if (!(currentNode.Type == SymanticNodeTypes.BinaryFunction
+                        && nextNode.Type == SymanticNodeTypes.BinaryFunction))
                 {
-                    throw new NotSupportedException("Not supported type of root node value.");
+                    throw new NotSupportedException("Not supported type of symantic nodes.");
                 }
+
+                var currentNodeFunction = (BinaryFunctionSymanticNode)currentNode;
+                var nextNodeFunction = (BinaryFunctionSymanticNode)nextNode;
 
                 // But merge them depending on their priority.
                 if (currentNodeFunction.Priority < nextNodeFunction.Priority)
                 {
-                    MergeNodeToRightSide(currentNode, nextNode);
+                    MergeNodeToRightSide(currentNodeFunction, nextNodeFunction);
                     symanticNodes.Remove(nextNode);
                 }
                 else
                 {
-                    MergeNodeToLeftSide(nextNode, currentNode);
+                    MergeNodeToLeftSide(nextNodeFunction, currentNodeFunction);
                     symanticNodes.Remove(currentNode);
                 }
 
             }
 
-            ConvertSubNodesToTree(symanticNodes[0]);
+            var root = symanticNodes[0];
 
-            return symanticNodes[0];
+            if (root.Type == SymanticNodeTypes.Braces)
+            {
+                // The case when only one node exists and it is braces: (1 + 2 * 3)
+                var braces = (BracesSymanticNode)root;
+                root = BuildSymanticTree(braces.ChildNodes);
+            }
+            else
+            {
+                ConvertAllChildBracesToTrees(root);
+            }
+
+            return root;
         }
 
-        private void MergeNodeToLeftSide(SymanticNode root, SymanticNode node)
+        private void MergeNodeToLeftSide(BinaryFunctionSymanticNode root, BinaryFunctionSymanticNode node)
         {
             var currentNode = root;
-            while (!LeftChildIsLeaf(currentNode.LeftChild))
+            while (currentNode.LeftChild.Type == SymanticNodeTypes.BinaryFunction)
             {
-                currentNode = currentNode.LeftChild;
+                currentNode = (BinaryFunctionSymanticNode)currentNode.LeftChild;
             }
 
             currentNode.LeftChild = node;
         }
 
-        private bool LeftChildIsLeaf(SymanticNode SymanticToken)
-        {
-            if (SymanticToken.HasSubNodes)
-            {
-                return true;
-            }
-
-            return SymanticToken.LeftChild == null;
-        }
-
-        private void MergeNodeToRightSide(SymanticNode root, SymanticNode node)
+        private void MergeNodeToRightSide(BinaryFunctionSymanticNode root, BinaryFunctionSymanticNode node)
         {
             var currentNode = root;
-            while (!RightChildIsLeaf(currentNode.RightChild))
+            while (currentNode.RightChild.Type == SymanticNodeTypes.BinaryFunction)
             {
-                currentNode = currentNode.RightChild;
+                currentNode = (BinaryFunctionSymanticNode)currentNode.RightChild;
             }
 
             currentNode.RightChild = node;
         }
 
-        private bool RightChildIsLeaf(SymanticNode SymanticToken)
+        private void ConvertAllChildBracesToTrees(SymanticNode symanticNode)
         {
-            if (SymanticToken.HasSubNodes)
+            void Analyze(SymanticNode nodeToAnalyze, Action<SymanticNode> swapChilds)
             {
-                return true;
-            }
-
-            return SymanticToken.RightChild == null;
-        }
-
-        private void ConvertSubNodesToTree(SymanticNode SymanticToken)
-        {
-            if (SymanticToken.LeftChild != null)
-            {
-                var leftChild = SymanticToken.LeftChild;
-
-                if (leftChild.HasSubNodes)
+                if (nodeToAnalyze.Type == SymanticNodeTypes.Braces)
                 {
-                    var newLeftNode = BuildSymanticTree(leftChild.SubNodes);
-                    if (leftChild.Value == null)
-                    {
-                        SymanticToken.LeftChild = newLeftNode;
-                    }
-                    else
-                    {
-                        leftChild.LeftChild = newLeftNode;
-                        leftChild.SubNodes = null;
-                    }
+                    var braces = (BracesSymanticNode)nodeToAnalyze;
+                    var newChild = BuildSymanticTree(braces.ChildNodes);
+
+                    swapChilds(newChild);
                 }
-                else if (leftChild.Value is Function)
+                else if (nodeToAnalyze.Type != SymanticNodeTypes.Number)
                 {
-                    ConvertSubNodesToTree(leftChild);
+                    ConvertAllChildBracesToTrees(nodeToAnalyze);
                 }
             }
 
-            if (SymanticToken.RightChild != null)
+            switch (symanticNode.Type)
             {
-                var rightChild = SymanticToken.RightChild;
+                case SymanticNodeTypes.UnaryFunction:
+                    {
+                        var func = (UnaryFunctionSymanticNode)symanticNode;
 
-                if (rightChild.HasSubNodes)
-                {
-                    var newRightNode = BuildSymanticTree(rightChild.SubNodes);
-                    if (rightChild.Value == null)
-                    {
-                        SymanticToken.RightChild = newRightNode;
+                        Analyze(func.Child, (nc) => func.Child = nc);
                     }
-                    else
+                    break;
+                case SymanticNodeTypes.BinaryFunction:
                     {
-                        rightChild.LeftChild = newRightNode;
-                        rightChild.SubNodes = null;
+
+                        var func = (BinaryFunctionSymanticNode)symanticNode;
+
+                        Analyze(func.LeftChild, (nc) => func.LeftChild = nc);
+                        Analyze(func.RightChild, (nc) => func.RightChild = nc);
                     }
-                }
-                else if (rightChild.Value is Function)
-                {
-                    ConvertSubNodesToTree(rightChild);
-                }
+                    break;
             }
-
         }
     }
 }

@@ -9,6 +9,6 @@ namespace Processing.Symantics
     {
         IList<SymanticNode> TransformSyntaxToSymantics(IList<SyntaxToken> syntaxTokens);
 
-        IHasValue TransformSymanticTreeToCalculationModel(SymanticNode symanticTree);
+        IHasValue TransformSymanticTreeToCalculationModel(SymanticNode symanticTreeRoot);
     }
 }

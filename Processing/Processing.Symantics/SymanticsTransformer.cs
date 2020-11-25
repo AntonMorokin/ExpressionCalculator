@@ -1,90 +1,144 @@
 ﻿using Calculation.Model;
-using Calculation.Model.Functions.Binary;
-using Calculation.Model.Functions.Unary;
+using Calculation.Model.Factories;
+using Processing.Symantics.Factories;
 using Processing.Symantics.Model;
 using Processing.Syntax.Model;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Processing.Symantics
 {
     internal sealed class SymanticsTransformer : ISymanticsTransformer
     {
+        private readonly IFunctionPriorityStore _functionPriorityStore;
+        private readonly ICalculationObjectFactory _calculationObjectFactory;
+
+        public SymanticsTransformer(IFunctionPriorityStore functionPriorityStore, ICalculationObjectFactory calculationObjectFactory)
+        {
+            _functionPriorityStore = functionPriorityStore;
+            _calculationObjectFactory = calculationObjectFactory;
+        }
+
         public IList<SymanticNode> TransformSyntaxToSymantics(IList<SyntaxToken> syntaxTokens)
         {
-            var flatSymanticTokens = new List<SymanticNode>(16);
+            var flatSymanticNodes = CreateFlatList(syntaxTokens);
 
-            foreach (var listNode in syntaxTokens)
+            if (!flatSymanticNodes.Any(n => n.Type == SymanticNodeTypes.BinaryFunction))
             {
-                var node = new SymanticNode
-                {
-                    Value = listNode.MainValue
-                };
-
-                if (listNode.HasSubTokens)
-                {
-                    node.SubNodes = TransformSyntaxToSymantics(listNode.SubTokens);
-                }
-
-                flatSymanticTokens.Add(node);
+                return flatSymanticNodes;
             }
 
-            SymanticNode currentListNode;
-            var SymanticTokens = new List<SymanticNode>(16);
+            SymanticNode currentNode;
+            var symanticTokens = new List<SymanticNode>(16);
 
-            // TODO: Temporary
-            if (flatSymanticTokens.Count < 2)
+            for (int i = 0; i < flatSymanticNodes.Count; i++)
             {
-                return flatSymanticTokens;
-            }
-
-            for (int i = 0; i < flatSymanticTokens.Count; i++)
-            {
-                currentListNode = flatSymanticTokens[i];
-                if (currentListNode.Value is BinaryFunction)
+                currentNode = flatSymanticNodes[i];
+                if (currentNode.Type == SymanticNodeTypes.BinaryFunction)
                 {
-                    currentListNode.LeftChild = flatSymanticTokens[i - 1];
-                    currentListNode.RightChild = flatSymanticTokens[i + 1];
+                    var binaryFunctionNode = (BinaryFunctionSymanticNode)currentNode;
 
-                    SymanticTokens.Add(currentListNode);
+                    binaryFunctionNode.LeftChild = flatSymanticNodes[i - 1];
+                    binaryFunctionNode.RightChild = flatSymanticNodes[i + 1];
+
+                    symanticTokens.Add(binaryFunctionNode);
 
                     i++;
                     continue;
                 }
             }
 
-            return SymanticTokens;
+            return symanticTokens;
         }
 
-        public IHasValue TransformSymanticTreeToCalculationModel(SymanticNode symanticTree)
+        private List<SymanticNode> CreateFlatList(IList<SyntaxToken> syntaxTokens)
         {
-            var value = symanticTree.Value;
+            var flatSymanticNodes = new List<SymanticNode>(16);
 
-            if (value is Number)
+            foreach (var token in syntaxTokens)
             {
-                return value;
+                SymanticNode node;
+
+                switch (token.Type)
+                {
+                    case SyntaxTokenTypes.Number:
+                        {
+                            node = new NumberSymanticNode(token.Value);
+                        }
+                        break;
+                    case SyntaxTokenTypes.BinaryFunction:
+                        {
+                            var priority = _functionPriorityStore.GetPripority(token.Value);
+                            node = new BinaryFunctionSymanticNode(token.Value, priority);
+                        }
+                        break;
+                    case SyntaxTokenTypes.Braces:
+                        {
+                            var bst = (BracesSyntaxToken)token;
+                            var childNodes = TransformSyntaxToSymantics(bst.ChildTokens);
+
+                            node = new BracesSymanticNode(childNodes);
+                        }
+                        break;
+                    case SyntaxTokenTypes.UnaryFunction:
+                        {
+                            var ufst = (UnaryFunctionSyntaxToken)token;
+                            var braces = (BracesSymanticNode)TransformSyntaxToSymantics(new[] { ufst.Braces }).Single();
+
+                            node = new UnaryFunctionSymanticNode(ufst.Value, braces);
+                        }
+                        break;
+                    default:
+                        {
+                            throw new NotSupportedException($"Unknown syntax token type: {token.Type}.");
+                        }
+                }
+
+                flatSymanticNodes.Add(node);
             }
 
-            if (value is UnaryFunction uf)
+            return flatSymanticNodes;
+        }
+
+        public IHasValue TransformSymanticTreeToCalculationModel(SymanticNode symanticTreeRoot)
+        {
+            var nodeType = symanticTreeRoot.Type;
+
+            switch (nodeType)
             {
-                var unaryFunctionValue = TransformSymanticTreeToCalculationModel(symanticTree.LeftChild);
+                case SymanticNodeTypes.Number:
+                    {
+                        return _calculationObjectFactory.Create(symanticTreeRoot.Value);
+                    }
+                case SymanticNodeTypes.BinaryFunction:
+                    {
+                        var binaryFunctionNode = (BinaryFunctionSymanticNode)symanticTreeRoot;
 
-                uf.SetArguments(unaryFunctionValue);
+                        var firstValue = TransformSymanticTreeToCalculationModel(binaryFunctionNode.LeftChild);
+                        var secondValue = TransformSymanticTreeToCalculationModel(binaryFunctionNode.RightChild);
 
-                return uf;
+                        var func = (Function)_calculationObjectFactory.Create(binaryFunctionNode.Value);
+
+                        func.SetArguments(firstValue, secondValue);
+
+                        return func;
+                    }
+                case SymanticNodeTypes.UnaryFunction:
+                    {
+                        var unaryFunctionNode = (UnaryFunctionSymanticNode)symanticTreeRoot;
+
+                        var value = TransformSymanticTreeToCalculationModel(unaryFunctionNode.Child);
+
+                        var func = (Function)_calculationObjectFactory.Create(unaryFunctionNode.Value);
+
+                        func.SetArguments(value);
+
+                        return func;
+                    }
+                default:
+                    throw new NotSupportedException($"Unknown symantic node type: {symanticTreeRoot.Type}.");
             }
-
-            if (value is BinaryFunction bf)
-            {
-                var firstValue = TransformSymanticTreeToCalculationModel(symanticTree.LeftChild);
-                var secondValue = TransformSymanticTreeToCalculationModel(symanticTree.RightChild);
-
-                bf.SetArguments(firstValue, secondValue);
-
-                return bf;
-            }
-
-            throw new InvalidOperationException($"Unknown value type {value?.GetType().Name}");
         }
     }
 }
