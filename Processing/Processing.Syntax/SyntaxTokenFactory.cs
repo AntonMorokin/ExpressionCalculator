@@ -1,48 +1,33 @@
-﻿using Calculation.Model.Factories;
-using Calculation.Model.Functions.Binary;
-using Calculation.Model.Functions.Unary;
-using Processing.Syntax.Model;
-using Resources;
+﻿using Processing.Syntax.Model;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 
 namespace Processing.Syntax
 {
     internal class SyntaxTokenFactory : ISyntaxTokenFactory
     {
-        private readonly INumberFactory _numberFactory;
-        private readonly IDictionary<char, Func<BinaryFunction>> _knownBinaryFunctions;
-        private readonly IDictionary<string, Func<UnaryFunction>> _knownUnaryFunctions;
-
-        public IEnumerable<char> KnownBinaryFunctions => _knownBinaryFunctions.Keys;
-
-        public SyntaxTokenFactory(IResourceStore resourceStore, INumberFactory numberFactory)
+        private readonly IReadOnlyCollection<char> _knownBinaryFunctions = new List<char>
         {
-            _numberFactory = numberFactory;
+            '+',
+            '-',
+            '*',
+            '/'
+        };
 
-            _knownBinaryFunctions = new Dictionary<char, Func<BinaryFunction>>
-            {
-                { '+', () => new Plus(resourceStore, _numberFactory) },
-                { '-', () => new Minus(resourceStore, _numberFactory) },
-                { '*', () => new Multiply(resourceStore, _numberFactory) },
-                { '/', () => new Divide(resourceStore, _numberFactory) }
-            };
-
-            _knownUnaryFunctions = new Dictionary<string, Func<UnaryFunction>>
-            {
-                { "log2", () => new Log2(resourceStore, _numberFactory) }
-            };
-        }
-
-        public SyntaxTokenOld ParseToken(string valueToParse)
+        private readonly IReadOnlyCollection<string> _knownUnaryFunctions = new List<string>
         {
-            if (decimal.TryParse(valueToParse, NumberStyles.Any, CultureInfo.CurrentCulture, out var number))
+            "log2"
+        };
+
+        public IEnumerable<char> KnownBinaryFunctions => _knownBinaryFunctions;
+
+        public SyntaxToken ParseToken(string valueToParse)
+        {
+            if (decimal.TryParse(valueToParse, NumberStyles.Any, CultureInfo.InvariantCulture, out _))
             {
-                return new SyntaxTokenOld
-                {
-                    MainValue = _numberFactory.CreateNumber(number)
-                };
+                return new SyntaxToken(SyntaxTokenTypes.Number, valueToParse);
             }
 
             if (TryParseBinaryFunction(valueToParse, out var commandNode))
@@ -53,17 +38,14 @@ namespace Processing.Syntax
             return ParseUnaryFunction(valueToParse);
         }
 
-        private bool TryParseBinaryFunction(string value, out SyntaxTokenOld parsedToken)
+        private bool TryParseBinaryFunction(string value, out SyntaxToken parsedToken)
         {
             parsedToken = null;
 
             if (value.Length == 1
-                && _knownBinaryFunctions.TryGetValue(value[0], out var createBinaryFunction))
+                && _knownBinaryFunctions.Any(f => f == value[0]))
             {
-                parsedToken = new SyntaxTokenOld
-                {
-                    MainValue = createBinaryFunction()
-                };
+                parsedToken = new SyntaxToken(SyntaxTokenTypes.BinaryFunction, value);
 
                 return true;
             }
@@ -71,14 +53,11 @@ namespace Processing.Syntax
             return false;
         }
 
-        private SyntaxTokenOld ParseUnaryFunction(string valueToParse)
+        private SyntaxToken ParseUnaryFunction(string valueToParse)
         {
-            if (_knownUnaryFunctions.TryGetValue(valueToParse, out var createUnaryFunction))
+            if (_knownUnaryFunctions.Any(f => f == valueToParse))
             {
-                return new SyntaxTokenOld
-                {
-                    MainValue = createUnaryFunction()
-                };
+                return new UnaryFunctionSyntaxToken(valueToParse);
             }
 
             throw new NotSupportedException($"Unknown unary function: {valueToParse}");

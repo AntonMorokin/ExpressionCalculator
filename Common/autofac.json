@@ -19,6 +19,15 @@
       "instanceScope": "singleinstance"
     },
     {
+      "type": "Calculation.Model.Factories.CalculationObjectFactory, Calculation.Model",
+      "services": [
+        {
+          "type": "Calculation.Model.Factories.ICalculationObjectFactory, Calculation.Model"
+        }
+      ],
+      "instanceScope": "singleinstance"
+    },
+    {
       "type": "Processing.Syntax.SyntaxTokenFactory, Processing.Syntax",
       "services": [
         {
@@ -50,6 +59,15 @@
       "services": [
         {
           "type": "Processing.Symantics.ISymanticAnalyzer, Processing.Symantics"
+        }
+      ],
+      "instanceScope": "singleinstance"
+    },
+    {
+      "type": "Processing.Symantics.Factories.FunctionPriorityStore, Processing.Symantics",
+      "services": [
+        {
+          "type": "Processing.Symantics.Factories.IFunctionPriorityStore, Processing.Symantics"
         }
       ],
       "instanceScope": "singleinstance"

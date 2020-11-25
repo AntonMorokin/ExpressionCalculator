@@ -4,10 +4,9 @@
     {
         public BracesSyntaxToken Braces { get; set; }
 
-        public UnaryFunctionSyntaxToken(string value, BracesSyntaxToken bracesToken)
+        public UnaryFunctionSyntaxToken(string value)
             : base(SyntaxTokenTypes.UnaryFunction, value)
         {
-            Braces = bracesToken;
         }
     }
 }

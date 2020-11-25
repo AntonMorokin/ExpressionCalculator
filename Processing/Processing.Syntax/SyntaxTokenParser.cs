@@ -17,7 +17,7 @@ namespace Processing.Syntax
             _syntaxTokenFactory = syntaxTokenFactory;
         }
 
-        public IList<SyntaxTokenOld> ParseSyntaxTokens(string expression)
+        public IList<SyntaxToken> ParseSyntaxTokens(string expression)
         {
             expression = expression?.Trim();
 
@@ -26,7 +26,7 @@ namespace Processing.Syntax
                 throw new ArgumentNullException(nameof(expression));
             }
 
-            var list = new List<SyntaxTokenOld>(16);
+            var list = new List<SyntaxToken>(16);
 
             char currentChar;
             int lastSignificantCharIndex = 0;
@@ -57,10 +57,10 @@ namespace Processing.Syntax
                     // Assume this is unary function, i.e. 1 + log2(8), and parse it.
                     else
                     {
-                        var unaryFunctionNode = _syntaxTokenFactory.ParseToken(
+                        var unaryFunctionNode = (UnaryFunctionSyntaxToken)_syntaxTokenFactory.ParseToken(
                             expressionBeforeBraces.Trim().TrimEnd(OPENING_BRACE_CHAR));
 
-                        unaryFunctionNode.SubTokens = bracesNode.SubTokens;
+                        unaryFunctionNode.Braces = bracesNode;
 
                         list.Add(unaryFunctionNode);
                     }
@@ -97,7 +97,7 @@ namespace Processing.Syntax
             return list;
         }
 
-        private (int lastIndex, SyntaxTokenOld node) ExtractBraces(string expression, int startIndex)
+        private (int lastIndex, BracesSyntaxToken node) ExtractBraces(string expression, int startIndex)
         {
             int nestingLevel = 0;
             char currentChar;
@@ -125,10 +125,7 @@ namespace Processing.Syntax
                     string expressionInBraces = expression[(startIndex + 1)..i];
                     var subNodes = ParseSyntaxTokens(expressionInBraces);
 
-                    var braceNode = new SyntaxTokenOld
-                    {
-                        SubTokens = subNodes.ToList()
-                    };
+                    var braceNode = new BracesSyntaxToken(subNodes);
 
                     return (i, braceNode);
                 }

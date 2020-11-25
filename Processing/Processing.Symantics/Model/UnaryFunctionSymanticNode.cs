@@ -2,12 +2,12 @@
 {
     public sealed class UnaryFunctionSymanticNode : SymanticNode
     {
-        public BracesSymanticNode Braces { get; set; }
+        public SymanticNode Child { get; set; }
 
         public UnaryFunctionSymanticNode(string value, BracesSymanticNode bracesNode)
             : base(SymanticNodeTypes.UnaryFunction, value)
         {
-            Braces = bracesNode;
+            Child = bracesNode;
         }
     }
 }

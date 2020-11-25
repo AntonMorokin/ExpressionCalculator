@@ -5,6 +5,6 @@ namespace Processing.Syntax
 {
     public interface ISyntaxTokenParser
     {
-        IList<SyntaxTokenOld> ParseSyntaxTokens(string expression);
+        IList<SyntaxToken> ParseSyntaxTokens(string expression);
     }
 }

@@ -6,9 +6,12 @@
 
         public SymanticNode RightChild { get; set; }
 
-        public BinaryFunctionSymanticNode(string value)
+        public int Priority { get; set; }
+
+        public BinaryFunctionSymanticNode(string value, int priority)
             : base(SymanticNodeTypes.BinaryFunction, value)
         {
+            Priority = priority;
         }
     }
 }
