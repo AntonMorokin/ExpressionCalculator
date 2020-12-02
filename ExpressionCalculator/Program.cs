@@ -1,5 +1,5 @@
 ﻿using Common;
-using Processing.Symantics;
+using Processing.Semantics;
 using Processing.Syntax;
 using System;
 
@@ -13,13 +13,13 @@ namespace ExpressionCalculator
             var s = Console.ReadLine();
 
             var syntaxParser = TypeFactory.Get<ISyntaxTokenParser>();
-            var symanticsTransformer = TypeFactory.Get<ISymanticsTransformer>();
-            var symanticAnalyzer = TypeFactory.Get<ISymanticAnalyzer>();
+            var semanticsTransformer = TypeFactory.Get<ISemanticsTransformer>();
+            var semanticAnalyzer = TypeFactory.Get<ISemanticAnalyzer>();
 
             var syntaxTokens = syntaxParser.ParseSyntaxTokens(s);
-            var symanticNodes = symanticsTransformer.TransformSyntaxToSymantics(syntaxTokens);
-            var tree = symanticAnalyzer.BuildSymanticTree(symanticNodes);
-            var expression = symanticsTransformer.TransformSymanticTreeToCalculationModel(tree);
+            var semanticNodes = semanticsTransformer.TransformSyntaxToSemantics(syntaxTokens);
+            var tree = semanticAnalyzer.BuildSemanticTree(semanticNodes);
+            var expression = semanticsTransformer.TransformSemanticTreeToCalculationModel(tree);
 
             Console.WriteLine($"Result = {expression.GetValue()}");
         }

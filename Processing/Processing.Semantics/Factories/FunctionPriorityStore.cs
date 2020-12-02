@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Processing.Symantics.Factories
+namespace Processing.Semantics.Factories
 {
     internal sealed class FunctionPriorityStore : IFunctionPriorityStore
     {

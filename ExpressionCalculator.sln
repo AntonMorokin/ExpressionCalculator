@@ -17,7 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Processing", "Processing", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Processing.Syntax", "Processing\Processing.Syntax\Processing.Syntax.csproj", "{AB17DE0B-14A2-4B31-9778-1F02001A1269}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Processing.Symantics", "Processing\Processing.Symantics\Processing.Symantics.csproj", "{1708B524-880E-4321-8431-9FD55B5FED17}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Processing.Semantics", "Processing\Processing.Semantics\Processing.Semantics.csproj", "{1708B524-880E-4321-8431-9FD55B5FED17}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

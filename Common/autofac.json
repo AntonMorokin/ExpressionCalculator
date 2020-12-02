@@ -46,28 +46,28 @@
       "instanceScope": "singleinstance"
     },
     {
-      "type": "Processing.Symantics.SymanticsTransformer, Processing.Symantics",
+      "type": "Processing.Semantics.SemanticsTransformer, Processing.Semantics",
       "services": [
         {
-          "type": "Processing.Symantics.ISymanticsTransformer, Processing.Symantics"
+          "type": "Processing.Semantics.ISemanticsTransformer, Processing.Semantics"
         }
       ],
       "instanceScope": "singleinstance"
     },
     {
-      "type": "Processing.Symantics.SymanticAnalyzer, Processing.Symantics",
+      "type": "Processing.Semantics.SemanticAnalyzer, Processing.Semantics",
       "services": [
         {
-          "type": "Processing.Symantics.ISymanticAnalyzer, Processing.Symantics"
+          "type": "Processing.Semantics.ISemanticAnalyzer, Processing.Semantics"
         }
       ],
       "instanceScope": "singleinstance"
     },
     {
-      "type": "Processing.Symantics.Factories.FunctionPriorityStore, Processing.Symantics",
+      "type": "Processing.Semantics.Factories.FunctionPriorityStore, Processing.Semantics",
       "services": [
         {
-          "type": "Processing.Symantics.Factories.IFunctionPriorityStore, Processing.Symantics"
+          "type": "Processing.Semantics.Factories.IFunctionPriorityStore, Processing.Semantics"
         }
       ],
       "instanceScope": "singleinstance"

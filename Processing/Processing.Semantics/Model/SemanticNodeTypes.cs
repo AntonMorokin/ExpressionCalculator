@@ -1,6 +1,6 @@
-﻿namespace Processing.Symantics.Model
+﻿namespace Processing.Semantics.Model
 {
-    public enum SymanticNodeTypes
+    public enum SemanticNodeTypes
     {
         Number,
         UnaryFunction,

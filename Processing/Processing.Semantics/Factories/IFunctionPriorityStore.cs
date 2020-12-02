@@ -1,4 +1,4 @@
-﻿namespace Processing.Symantics.Factories
+﻿namespace Processing.Semantics.Factories
 {
     internal interface IFunctionPriorityStore
     {
