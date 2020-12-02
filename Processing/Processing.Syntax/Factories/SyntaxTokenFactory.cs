@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 
-namespace Processing.Syntax
+namespace Processing.Syntax.Factories
 {
     internal class SyntaxTokenFactory : ISyntaxTokenFactory
     {

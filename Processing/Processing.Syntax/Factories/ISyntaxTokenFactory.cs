@@ -1,7 +1,7 @@
 ﻿using Processing.Syntax.Model;
 using System.Collections.Generic;
 
-namespace Processing.Syntax
+namespace Processing.Syntax.Factories
 {
     public interface ISyntaxTokenFactory
     {

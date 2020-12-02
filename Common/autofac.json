@@ -28,10 +28,10 @@
       "instanceScope": "singleinstance"
     },
     {
-      "type": "Processing.Syntax.SyntaxTokenFactory, Processing.Syntax",
+      "type": "Processing.Syntax.Factories.SyntaxTokenFactory, Processing.Syntax",
       "services": [
         {
-          "type": "Processing.Syntax.ISyntaxTokenFactory, Processing.Syntax"
+          "type": "Processing.Syntax.Factories.ISyntaxTokenFactory, Processing.Syntax"
         }
       ],
       "instanceScope": "singleinstance"
