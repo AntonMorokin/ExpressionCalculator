@@ -8,7 +8,7 @@ namespace Processing.Symantics
     {
         public SymanticNode BuildSymanticTree(IList<SymanticNode> symanticNodes)
         {
-            // TODO: maybe I need to cope input list to not affect callers.
+            // TODO: maybe I need to copy input list to not affect callers.
 
             SymanticNode currentNode = symanticNodes[0];
             SymanticNode nextNode;

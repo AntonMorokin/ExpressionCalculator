@@ -26,78 +26,60 @@ namespace Processing.Syntax
                 throw new ArgumentNullException(nameof(expression));
             }
 
-            var list = new List<SyntaxToken>(16);
+            var syntaxTokensRaw = new Dictionary<int, string>();
 
+            SplitExpressionToTokens(expression, 0, syntaxTokensRaw);
+
+            var orderedTokens = syntaxTokensRaw
+                .OrderBy(t => t.Key)
+                .Select(t => t.Value);
+
+            var syntaxTokens = ConvertToSyntaxTokens(orderedTokens);
+
+            Analyze(syntaxTokens);
+
+            return syntaxTokens;
+        }
+
+        private void SplitExpressionToTokens(string expression, int startIndex, IDictionary<int, string> syntaxTokensRaw)
+        {
+            bool bracesWereFound = false;
             char currentChar;
-            int lastSignificantCharIndex = 0;
-            int i;
 
-            for (i = 0; i < expression.Length; i++)
+            for (int i = startIndex; i < expression.Length; i++)
             {
                 currentChar = expression[i];
-                if (char.IsWhiteSpace(currentChar))
-                {
-                    continue;
-                }
 
                 if (currentChar == OPENING_BRACE_CHAR)
                 {
-                    var expressionBeforeBraces = expression[lastSignificantCharIndex..i];
+                    bracesWereFound = true;
+                    int lastIndexInclusive = FindBracesBoundary(expression, i) + 1;
 
-                    (int lastIndex, var bracesNode) = ExtractBraces(expression, i);
+                    string before = expression[startIndex..i];					
+                    SplitxpressionByBinaryFunctions(before, startIndex, syntaxTokensRaw);
 
-                    i = lastIndex;
-                    lastSignificantCharIndex = i + 1;
+                    string braces = expression[i..lastIndexInclusive];
+                    AddDetectingWhiteSpaces(braces, syntaxTokensRaw, i);
 
-                    if (string.IsNullOrWhiteSpace(expressionBeforeBraces))
+                    if (expression.Length - lastIndexInclusive > 0)
                     {
-                        list.Add(bracesNode);
-                    }
-                    // We found opening brace, but before it and last command something exists.
-                    // Assume this is unary function, i.e. 1 + log2(8), and parse it.
-                    else
-                    {
-                        var unaryFunctionNode = (UnaryFunctionSyntaxToken)_syntaxTokenFactory.ParseToken(
-                            expressionBeforeBraces.Trim().TrimEnd(OPENING_BRACE_CHAR));
-
-                        unaryFunctionNode.Braces = bracesNode;
-
-                        list.Add(unaryFunctionNode);
+                        SplitExpressionToTokens(expression, lastIndexInclusive, syntaxTokensRaw);
                     }
 
-                    continue;
-                }
-
-                if (_syntaxTokenFactory.KnownBinaryFunctions.Contains(currentChar))
-                {
-                    // When false it means we just parsed expression in braces.
-                    // Before it there is no value - only function.
-                    if (lastSignificantCharIndex < i)
-                    {
-                        string valueToParse = expression[lastSignificantCharIndex..i].Trim();
-
-                        list.Add(_syntaxTokenFactory.ParseToken(valueToParse));
-                    }
-
-                    list.Add(_syntaxTokenFactory.ParseToken(currentChar.ToString()));
-
-                    lastSignificantCharIndex = i + 1;
-
-                    continue;
+                    // We already split the last part
+                    // OR there is nothing to parse.
+                    return;
                 }
             }
 
-            if (lastSignificantCharIndex < i)
+            if (!bracesWereFound)
             {
-                string valueToParse = expression[lastSignificantCharIndex..i].Trim();
-
-                list.Add(_syntaxTokenFactory.ParseToken(valueToParse));
+                string last = expression[startIndex..];
+                SplitxpressionByBinaryFunctions(last, startIndex, syntaxTokensRaw);
             }
-
-            return list;
         }
 
-        private (int lastIndex, BracesSyntaxToken node) ExtractBraces(string expression, int startIndex)
+        private int FindBracesBoundary(string expression, int startIndex)
         {
             int nestingLevel = 0;
             char currentChar;
@@ -109,29 +91,117 @@ namespace Processing.Syntax
                 if (currentChar == OPENING_BRACE_CHAR)
                 {
                     nestingLevel++;
-                    continue;
                 }
 
-                if (currentChar == CLOSING_BRACE_CHAR
-                    && nestingLevel > 0)
+                if (currentChar == CLOSING_BRACE_CHAR)
                 {
+                    if (nestingLevel == 0)
+                    {
+                        return i;
+                    }
+
                     nestingLevel--;
-                    continue;
-                }
-
-                if (currentChar == CLOSING_BRACE_CHAR
-                    && nestingLevel == 0)
-                {
-                    string expressionInBraces = expression[(startIndex + 1)..i];
-                    var subNodes = ParseSyntaxTokens(expressionInBraces);
-
-                    var braceNode = new BracesSyntaxToken(subNodes);
-
-                    return (i, braceNode);
                 }
             }
 
-            throw new InvalidOperationException($"Did not find closing brace from {startIndex}: {expression}");
+            throw new FormatException($"Cannot find closing brace char starting from {startIndex} index in expression {expression}.");
+        }
+
+        private void SplitxpressionByBinaryFunctions(string expression, int indexesOffset, IDictionary<int, string> syntaxTokensRaw)
+        {
+            int startIndex = 0;
+
+            for (int i = 1; i <= expression.Length; i++)
+            {
+                string part = expression[startIndex..i];
+
+                if (ContainsBinaryFunction(part, out string bf))
+                {
+                    string before = part[0..(part.Length - bf.Length)];
+
+                    if (!string.IsNullOrWhiteSpace(before))
+                    {
+                        AddDetectingWhiteSpaces(before, syntaxTokensRaw, indexesOffset + startIndex);
+                    }
+
+                    AddDetectingWhiteSpaces(bf, syntaxTokensRaw, indexesOffset + startIndex + before.Length);
+
+                    startIndex += part.Length;
+                }
+            }
+
+            string last = expression[startIndex..];
+            if (!string.IsNullOrWhiteSpace(last))
+            {
+                AddDetectingWhiteSpaces(last, syntaxTokensRaw, indexesOffset + startIndex);
+            }
+        }
+
+        private bool ContainsBinaryFunction(string expression, out string foundBinaryFunction)
+        {
+            // '1.234 +'
+            // '12.34+'
+            // 12.43plus
+
+            foreach (string bf in _syntaxTokenFactory.KnownBinaryFunctions)
+            {
+                if (expression.EndsWith(bf, StringComparison.OrdinalIgnoreCase))
+                {
+                    foundBinaryFunction = bf;
+                    return true;
+                }
+            }
+
+            foundBinaryFunction = null;
+            return false;
+        }
+
+        private void AddDetectingWhiteSpaces(string syntaxTokenRaw, IDictionary<int, string> syntaxTokensRaw, int baseIndex)
+        {
+            var handledValue = syntaxTokenRaw.TrimStart();
+            int offset = syntaxTokenRaw.Length - handledValue.Length;
+
+            syntaxTokensRaw.Add(baseIndex + offset, handledValue.TrimEnd());
+        }
+
+        private IList<SyntaxToken> ConvertToSyntaxTokens(IEnumerable<string> orderedTokens)
+        {
+            var tokens = new List<SyntaxToken>();
+
+            foreach (string tokenRaw in orderedTokens)
+            {
+                if (tokenRaw.StartsWith(OPENING_BRACE_CHAR))
+                {
+                    var expressionToParse = tokenRaw.Trim(new char[] { OPENING_BRACE_CHAR, CLOSING_BRACE_CHAR });
+                    var childTokens = ParseSyntaxTokens(expressionToParse);
+
+                    var braces = new BracesSyntaxToken(childTokens);
+
+                    tokens.Add(braces);
+                }
+                else
+                {
+                    tokens.Add(_syntaxTokenFactory.ParseToken(tokenRaw));
+                }
+            }
+
+            return tokens;
+        }
+
+        private void Analyze(IList<SyntaxToken> syntaxTokens)
+        {
+            for (int i = 0; i < syntaxTokens.Count; i++)
+            {
+                if (syntaxTokens[i].Type == SyntaxTokenTypes.UnaryFunction)
+                {
+                    var uf = (UnaryFunctionSyntaxToken)syntaxTokens[i];
+                    var braces = (BracesSyntaxToken)syntaxTokens[i + 1];
+
+                    uf.Braces = braces;
+
+                    syntaxTokens.Remove(syntaxTokens[i + 1]);
+                }
+            }
         }
     }
 }

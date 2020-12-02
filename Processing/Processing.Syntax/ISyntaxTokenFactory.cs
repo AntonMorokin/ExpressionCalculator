@@ -5,7 +5,7 @@ namespace Processing.Syntax
 {
     public interface ISyntaxTokenFactory
     {
-        IEnumerable<char> KnownBinaryFunctions { get; }
+        IEnumerable<string> KnownBinaryFunctions { get; }
 
         SyntaxToken ParseToken(string token);
     }

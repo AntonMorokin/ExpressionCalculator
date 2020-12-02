@@ -8,12 +8,12 @@ namespace Processing.Syntax
 {
     internal class SyntaxTokenFactory : ISyntaxTokenFactory
     {
-        private readonly IReadOnlyCollection<char> _knownBinaryFunctions = new List<char>
+        private readonly IReadOnlyCollection<string> _knownBinaryFunctions = new List<string>
         {
-            '+',
-            '-',
-            '*',
-            '/'
+            "+",
+            "-",
+            "*",
+            "/"
         };
 
         private readonly IReadOnlyCollection<string> _knownUnaryFunctions = new List<string>
@@ -21,7 +21,7 @@ namespace Processing.Syntax
             "log2"
         };
 
-        public IEnumerable<char> KnownBinaryFunctions => _knownBinaryFunctions;
+        public IEnumerable<string> KnownBinaryFunctions => _knownBinaryFunctions;
 
         public SyntaxToken ParseToken(string valueToParse)
         {
@@ -42,8 +42,7 @@ namespace Processing.Syntax
         {
             parsedToken = null;
 
-            if (value.Length == 1
-                && _knownBinaryFunctions.Any(f => f == value[0]))
+            if (_knownBinaryFunctions.Any(f => f == value))
             {
                 parsedToken = new SyntaxToken(SyntaxTokenTypes.BinaryFunction, value);
 
