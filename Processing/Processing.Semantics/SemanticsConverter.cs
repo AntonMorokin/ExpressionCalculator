@@ -1,6 +1,4 @@
-﻿using Calculation.Model;
-using Calculation.Model.Factories;
-using Processing.Semantics.Factories;
+﻿using Processing.Semantics.Factories;
 using Processing.Semantics.Model;
 using Processing.Syntax.Model;
 using System;
@@ -9,18 +7,16 @@ using System.Linq;
 
 namespace Processing.Semantics
 {
-    internal sealed class SemanticsTransformer : ISemanticsTransformer
+    internal sealed class SemanticsConverter : ISemanticsConverter
     {
         private readonly IFunctionPriorityStore _functionPriorityStore;
-        private readonly ICalculationObjectFactory _calculationObjectFactory;
 
-        public SemanticsTransformer(IFunctionPriorityStore functionPriorityStore, ICalculationObjectFactory calculationObjectFactory)
+        public SemanticsConverter(IFunctionPriorityStore functionPriorityStore)
         {
             _functionPriorityStore = functionPriorityStore;
-            _calculationObjectFactory = calculationObjectFactory;
         }
 
-        public IList<SemanticNode> TransformSyntaxToSemantics(IList<SyntaxToken> syntaxTokens)
+        public IList<SemanticNode> ConvertSyntaxToSemantics(IList<SyntaxToken> syntaxTokens)
         {
             var flatSemanticNodes = CreateFlatList(syntaxTokens);
 
@@ -76,7 +72,7 @@ namespace Processing.Semantics
                     case SyntaxTokenTypes.Braces:
                         {
                             var bst = (BracesSyntaxToken)token;
-                            var childNodes = TransformSyntaxToSemantics(bst.ChildTokens);
+                            var childNodes = ConvertSyntaxToSemantics(bst.ChildTokens);
 
                             node = new BracesSemanticNode(childNodes);
                         }
@@ -84,7 +80,7 @@ namespace Processing.Semantics
                     case SyntaxTokenTypes.UnaryFunction:
                         {
                             var ufst = (UnaryFunctionSyntaxToken)token;
-                            var braces = (BracesSemanticNode)TransformSyntaxToSemantics(new[] { ufst.Braces }).Single();
+                            var braces = (BracesSemanticNode)ConvertSyntaxToSemantics(new[] { ufst.Braces }).Single();
 
                             node = new UnaryFunctionSemanticNode(ufst.Value, braces);
                         }
@@ -99,46 +95,6 @@ namespace Processing.Semantics
             }
 
             return flatSemanticNodes;
-        }
-
-        public IHasValue TransformSemanticTreeToCalculationModel(SemanticNode semanticTreeRoot)
-        {
-            var nodeType = semanticTreeRoot.Type;
-
-            switch (nodeType)
-            {
-                case SemanticNodeTypes.Number:
-                    {
-                        return _calculationObjectFactory.Create(semanticTreeRoot.Value);
-                    }
-                case SemanticNodeTypes.BinaryFunction:
-                    {
-                        var binaryFunctionNode = (BinaryFunctionSemanticNode)semanticTreeRoot;
-
-                        var firstValue = TransformSemanticTreeToCalculationModel(binaryFunctionNode.LeftChild);
-                        var secondValue = TransformSemanticTreeToCalculationModel(binaryFunctionNode.RightChild);
-
-                        var func = (Function)_calculationObjectFactory.Create(binaryFunctionNode.Value);
-
-                        func.SetArguments(firstValue, secondValue);
-
-                        return func;
-                    }
-                case SemanticNodeTypes.UnaryFunction:
-                    {
-                        var unaryFunctionNode = (UnaryFunctionSemanticNode)semanticTreeRoot;
-
-                        var value = TransformSemanticTreeToCalculationModel(unaryFunctionNode.Child);
-
-                        var func = (Function)_calculationObjectFactory.Create(unaryFunctionNode.Value);
-
-                        func.SetArguments(value);
-
-                        return func;
-                    }
-                default:
-                    throw new NotSupportedException($"Unknown semantic node type: {semanticTreeRoot.Type}.");
-            }
         }
     }
 }

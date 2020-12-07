@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Calculation\Calculation.Model\Calculation.Model.csproj" />
+    <ProjectReference Include="..\Processing.Semantics\Processing.Semantics.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,7 +1,6 @@
 ﻿using Calculation.Model.Factories;
 using Common;
 using Resources;
-using System;
 
 namespace Calculation.Model.Functions.Binary
 {

@@ -1,5 +1,6 @@
 ﻿{
   "components": [
+    // Common
     {
       "type": "Resources.ResourceStore, Resources",
       "services": [
@@ -27,11 +28,30 @@
       ],
       "instanceScope": "singleinstance"
     },
+    // Syntax
     {
       "type": "Processing.Syntax.Factories.SyntaxTokenFactory, Processing.Syntax",
       "services": [
         {
           "type": "Processing.Syntax.Factories.ISyntaxTokenFactory, Processing.Syntax"
+        }
+      ],
+      "instanceScope": "singleinstance"
+    },
+    {
+      "type": "Processing.Syntax.ExpressionParser, Processing.Syntax",
+      "services": [
+        {
+          "type": "Processing.Syntax.IExpressionParser, Processing.Syntax"
+        }
+      ],
+      "instanceScope": "singleinstance"
+    },
+    {
+      "type": "Processing.Syntax.SyntaxAnalyzer, Processing.Syntax",
+      "services": [
+        {
+          "type": "Processing.Syntax.ISyntaxAnalyzer, Processing.Syntax"
         }
       ],
       "instanceScope": "singleinstance"
@@ -46,28 +66,66 @@
       "instanceScope": "singleinstance"
     },
     {
-      "type": "Processing.Semantics.SemanticsTransformer, Processing.Semantics",
+      "type": "Processing.Syntax.SyntaxProcessor, Processing.Syntax",
       "services": [
         {
-          "type": "Processing.Semantics.ISemanticsTransformer, Processing.Semantics"
+          "type": "Processing.Syntax.ISyntaxProcessor, Processing.Syntax"
         }
       ],
       "instanceScope": "singleinstance"
     },
-    {
-      "type": "Processing.Semantics.SemanticAnalyzer, Processing.Semantics",
-      "services": [
-        {
-          "type": "Processing.Semantics.ISemanticAnalyzer, Processing.Semantics"
-        }
-      ],
-      "instanceScope": "singleinstance"
-    },
+    // Semantics
     {
       "type": "Processing.Semantics.Factories.FunctionPriorityStore, Processing.Semantics",
       "services": [
         {
           "type": "Processing.Semantics.Factories.IFunctionPriorityStore, Processing.Semantics"
+        }
+      ],
+      "instanceScope": "singleinstance"
+    },
+    {
+      "type": "Processing.Semantics.SemanticsConverter, Processing.Semantics",
+      "services": [
+        {
+          "type": "Processing.Semantics.ISemanticsConverter, Processing.Semantics"
+        }
+      ],
+      "instanceScope": "singleinstance"
+    },
+    {
+      "type": "Processing.Semantics.SemanticsBuilder, Processing.Semantics",
+      "services": [
+        {
+          "type": "Processing.Semantics.ISemanticsBuilder, Processing.Semantics"
+        }
+      ],
+      "instanceScope": "singleinstance"
+    },
+    {
+      "type": "Processing.Semantics.SemanticsProcessor, Processing.Semantics",
+      "services": [
+        {
+          "type": "Processing.Semantics.ISemanticsProcessor, Processing.Semantics"
+        }
+      ],
+      "instanceScope": "singleinstance"
+    },
+    // Calculation
+    {
+      "type": "Processing.Calculation.CalculationModelConverter, Processing.Calculation",
+      "services": [
+        {
+          "type": "Processing.Calculation.ICalculationModelConverter, Processing.Calculation"
+        }
+      ],
+      "instanceScope": "singleinstance"
+    },
+    {
+      "type": "Processing.Calculation.ExpressionCalculator, Processing.Calculation",
+      "services": [
+        {
+          "type": "Processing.Calculation.IExpressionCalculator, Processing.Calculation"
         }
       ],
       "instanceScope": "singleinstance"

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Processing.Semantics
 {
-    internal sealed class SemanticAnalyzer : ISemanticAnalyzer
+    internal sealed class SemanticsBuilder : ISemanticsBuilder
     {
         public SemanticNode BuildSemanticTree(IList<SemanticNode> semanticNodes)
         {

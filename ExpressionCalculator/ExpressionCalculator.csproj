@@ -7,8 +7,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj" />
-    <ProjectReference Include="..\Processing\Processing.Semantics\Processing.Semantics.csproj" />
-    <ProjectReference Include="..\Processing\Processing.Syntax\Processing.Syntax.csproj" />
+    <ProjectReference Include="..\Processing\Processing.Calculation\Processing.Calculation.csproj" />
   </ItemGroup>
 
 </Project>
