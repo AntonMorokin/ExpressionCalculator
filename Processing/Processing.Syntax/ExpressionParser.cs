@@ -1,4 +1,5 @@
 ﻿using Processing.Syntax.Factories;
+using Resources;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,11 +11,13 @@ namespace Processing.Syntax
         private const char OPENING_BRACE_CHAR = '(';
         private const char CLOSING_BRACE_CHAR = ')';
 
+        private readonly IResourceStore _resourceStore;
         private readonly ISyntaxTokenFactory _syntaxTokenFactory;
 
-        public ExpressionParser(ISyntaxTokenFactory syntaxTokenFactory)
+        public ExpressionParser(IResourceStore resourceStore, ISyntaxTokenFactory syntaxTokenFactory)
         {
             _syntaxTokenFactory = syntaxTokenFactory;
+            _resourceStore = resourceStore;
         }
 
         public IDictionary<int, string> SplitExpressionToTokens(string expression)
@@ -98,7 +101,8 @@ namespace Processing.Syntax
                 }
             }
 
-            throw new FormatException($"Cannot find closing brace char starting from {startIndex} index in expression {expression}.");
+            string message = _resourceStore.GetExceptionMessage("ClosingBraceDoesNotExist", startIndex, expression);
+            throw new FormatException(message);
         }
 
         private void SplitxpressionByBinaryFunctions(string expression, int indexesOffset, IDictionary<int, string> syntaxTokensRaw)

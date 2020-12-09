@@ -1,4 +1,5 @@
 ﻿using Processing.Syntax.Model;
+using Resources;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -21,6 +22,13 @@ namespace Processing.Syntax.Factories
             "log2"
         };
 
+        private readonly IResourceStore _resourceStore;
+
+        public SyntaxTokenFactory(IResourceStore resourceStore)
+        {
+            _resourceStore = resourceStore;
+        }
+
         public IEnumerable<string> KnownBinaryFunctions => _knownBinaryFunctions;
 
         public SyntaxToken ParseToken(string valueToParse)
@@ -30,36 +38,42 @@ namespace Processing.Syntax.Factories
                 return new SyntaxToken(SyntaxTokenTypes.Number, valueToParse);
             }
 
-            if (TryParseBinaryFunction(valueToParse, out var commandNode))
+            if (TryParseBinaryFunction(valueToParse, out var binaryFunctionToken))
             {
-                return commandNode;
+                return binaryFunctionToken;
             }
 
-            return ParseUnaryFunction(valueToParse);
+            if (TryParseUnaryFunction(valueToParse, out var unaryFunctionToken))
+            {
+                return unaryFunctionToken;
+            }
+
+            string message = _resourceStore.GetExceptionMessage("UnknownSyntaxToken", valueToParse);
+            throw new NotSupportedException(message);
         }
 
         private bool TryParseBinaryFunction(string value, out SyntaxToken parsedToken)
         {
-            parsedToken = null;
-
             if (_knownBinaryFunctions.Any(f => f == value))
             {
                 parsedToken = new SyntaxToken(SyntaxTokenTypes.BinaryFunction, value);
-
                 return true;
             }
 
+            parsedToken = null;
             return false;
         }
 
-        private SyntaxToken ParseUnaryFunction(string valueToParse)
+        private bool TryParseUnaryFunction(string valueToParse, out SyntaxToken parsedToken)
         {
             if (_knownUnaryFunctions.Any(f => f == valueToParse))
             {
-                return new UnaryFunctionSyntaxToken(valueToParse);
+                parsedToken = new UnaryFunctionSyntaxToken(valueToParse);
+                return true;
             }
 
-            throw new NotSupportedException($"Unknown unary function: {valueToParse}");
+            parsedToken = null;
+            return false;
         }
     }
 }

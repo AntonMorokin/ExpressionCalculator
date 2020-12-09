@@ -129,6 +129,16 @@
         }
       ],
       "instanceScope": "singleinstance"
+    },
+    // ExpressionCalculator
+    {
+      "type": "ExpressionCalculator.ExpressionCalculatorProcessor, ExpressionCalculator",
+      "services": [
+        {
+          "type": "ExpressionCalculator.IExpressionCalculatorProcessor, ExpressionCalculator"
+        }
+      ],
+      "instanceScope": "singleinstance"
     }
   ]
 }

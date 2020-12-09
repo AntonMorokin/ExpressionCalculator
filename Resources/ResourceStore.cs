@@ -10,5 +10,11 @@
         {
             return ExceptionMessages.ResourceManager.GetString(resourceName);
         }
+
+        /// <inheritdoc />
+        public string GetExceptionMessage(string resourceName, params object[] parameters)
+        {
+            return string.Format(GetExceptionMessage(resourceName), parameters);
+        }
     }
 }

@@ -61,11 +61,29 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Binary function cannot be first in the expression..
+        /// </summary>
+        internal static string BinaryFunctionCannotBeFirst {
+            get {
+                return ResourceManager.GetString("BinaryFunctionCannotBeFirst", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Can not render function..
         /// </summary>
         internal static string CannotRenderFunction {
             get {
                 return ResourceManager.GetString("CannotRenderFunction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot find closing brace char starting from {0} index in expression {1}..
+        /// </summary>
+        internal static string ClosingBraceDoesNotExist {
+            get {
+                return ResourceManager.GetString("ClosingBraceDoesNotExist", resourceCulture);
             }
         }
         
@@ -79,11 +97,101 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Expression cannot be empty..
+        /// </summary>
+        internal static string ExpressionCannotBeEmpty {
+            get {
+                return ResourceManager.GetString("ExpressionCannotBeEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} function cannot be last in the expression..
+        /// </summary>
+        internal static string FunctionCannotBeLast {
+            get {
+                return ResourceManager.GetString("FunctionCannotBeLast", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} function cannot be only one in the expression..
+        /// </summary>
+        internal static string FunctionCannotBeSingle {
+            get {
+                return ResourceManager.GetString("FunctionCannotBeSingle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid state of semantics: when building semantic tree all nodes must be binary functions..
+        /// </summary>
+        internal static string InvalidSemanticsStateForTreeBuilding {
+            get {
+                return ResourceManager.GetString("InvalidSemanticsStateForTreeBuilding", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There must be {0} after {1}..
+        /// </summary>
+        internal static string InvalidSyntaxTokensOrder {
+            get {
+                return ResourceManager.GetString("InvalidSyntaxTokensOrder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The number of passed arguments does not correspond to this type of function..
         /// </summary>
         internal static string NumberOfArgumentsMismatch {
             get {
                 return ResourceManager.GetString("NumberOfArgumentsMismatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown value for creating calculation object: {0}..
+        /// </summary>
+        internal static string UnknownCalculationObject {
+            get {
+                return ResourceManager.GetString("UnknownCalculationObject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot find priority for function: {0}.
+        /// </summary>
+        internal static string UnknownFunctionForPrioritization {
+            get {
+                return ResourceManager.GetString("UnknownFunctionForPrioritization", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown semantic node type: {0}..
+        /// </summary>
+        internal static string UnknownSemanticNodeType {
+            get {
+                return ResourceManager.GetString("UnknownSemanticNodeType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown syntax token: {0}.
+        /// </summary>
+        internal static string UnknownSyntaxToken {
+            get {
+                return ResourceManager.GetString("UnknownSyntaxToken", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown type of syntax token: {0}..
+        /// </summary>
+        internal static string UnknownSyntaxTokenType {
+            get {
+                return ResourceManager.GetString("UnknownSyntaxTokenType", resourceCulture);
             }
         }
     }

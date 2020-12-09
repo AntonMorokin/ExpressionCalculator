@@ -1,6 +1,7 @@
 ﻿using Processing.Semantics.Factories;
 using Processing.Semantics.Model;
 using Processing.Syntax.Model;
+using Resources;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,11 +10,13 @@ namespace Processing.Semantics
 {
     internal sealed class SemanticsConverter : ISemanticsConverter
     {
+        private readonly IResourceStore _resourceStore;
         private readonly IFunctionPriorityStore _functionPriorityStore;
 
-        public SemanticsConverter(IFunctionPriorityStore functionPriorityStore)
+        public SemanticsConverter(IResourceStore resourceStore, IFunctionPriorityStore functionPriorityStore)
         {
             _functionPriorityStore = functionPriorityStore;
+            _resourceStore = resourceStore;
         }
 
         public IList<SemanticNode> ConvertSyntaxToSemantics(IList<SyntaxToken> syntaxTokens)
@@ -87,7 +90,8 @@ namespace Processing.Semantics
                         break;
                     default:
                         {
-                            throw new NotSupportedException($"Unknown syntax token type: {token.Type}.");
+                            throw new NotSupportedException(
+                                _resourceStore.GetExceptionMessage("UnknownSyntaxTokenType", token.Type));
                         }
                 }
 

@@ -1,82 +1,31 @@
 ﻿using Processing.Semantics.Model;
+using Resources;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Processing.Semantics
 {
     internal sealed class SemanticsBuilder : ISemanticsBuilder
     {
+        private readonly IResourceStore _resourceStore;
+
+        public SemanticsBuilder(IResourceStore resourceStore)
+        {
+            _resourceStore = resourceStore;
+        }
+
         public SemanticNode BuildSemanticTree(IList<SemanticNode> semanticNodes)
         {
-            // TODO: maybe I need to copy input list to not affect callers.
+            ValidateSymanticNodes(semanticNodes);
 
-            SemanticNode currentNode = semanticNodes[0];
-            SemanticNode nextNode;
-            bool multipleLineExists = false;
+            // Copy nodes to not affect callers.
+            var nodes = new List<SemanticNode>(semanticNodes);
 
-            do
-            {
-                // Step over all nodes.
-                for (int i = 1; i < semanticNodes.Count; i++)
-                {
-                    nextNode = semanticNodes[i];
+            MergeNodesWithTheSamePriority(nodes);
+            MergeRemainingNodes(nodes);
 
-                    // TODO: code is duplicated and can be moved to the method.
-                    if (!(currentNode.Type == SemanticNodeTypes.BinaryFunction
-                        && nextNode.Type == SemanticNodeTypes.BinaryFunction))
-                    {
-                        throw new NotSupportedException("Not supported type of semantic nodes.");
-                    }
-
-                    var currentNodeFunction = (BinaryFunctionSemanticNode)currentNode;
-                    var nextNodeFunction = (BinaryFunctionSemanticNode)nextNode;
-
-                    // When priorities of current and next nodes are equal
-                    if (currentNodeFunction.Priority == nextNodeFunction.Priority)
-                    {
-                        // Then merge current node to leftmost node of next node.
-                        MergeNodeToLeftSide(nextNodeFunction, currentNodeFunction);
-                        semanticNodes.Remove(currentNode);
-                        i--;
-                    }
-
-                    // make next node current
-                    currentNode = nextNode;
-                }
-
-            } while (multipleLineExists);
-
-            // When we steped over all nodes and did not make any swap
-            // Then step over all nodes one more time
-            while (semanticNodes.Count > 1)
-            {
-                currentNode = semanticNodes[0];
-                nextNode = semanticNodes[1];
-
-                if (!(currentNode.Type == SemanticNodeTypes.BinaryFunction
-                        && nextNode.Type == SemanticNodeTypes.BinaryFunction))
-                {
-                    throw new NotSupportedException("Not supported type of semantic nodes.");
-                }
-
-                var currentNodeFunction = (BinaryFunctionSemanticNode)currentNode;
-                var nextNodeFunction = (BinaryFunctionSemanticNode)nextNode;
-
-                // But merge them depending on their priority.
-                if (currentNodeFunction.Priority < nextNodeFunction.Priority)
-                {
-                    MergeNodeToRightSide(currentNodeFunction, nextNodeFunction);
-                    semanticNodes.Remove(nextNode);
-                }
-                else
-                {
-                    MergeNodeToLeftSide(nextNodeFunction, currentNodeFunction);
-                    semanticNodes.Remove(currentNode);
-                }
-
-            }
-
-            var root = semanticNodes[0];
+            var root = nodes[0];
 
             if (root.Type == SemanticNodeTypes.Braces)
             {
@@ -92,6 +41,49 @@ namespace Processing.Semantics
             return root;
         }
 
+        private void ValidateSymanticNodes(IList<SemanticNode> semanticNodes)
+        {
+            if (semanticNodes.Count > 1
+                && semanticNodes.Any(n => n.Type != SemanticNodeTypes.BinaryFunction))
+            {
+                throw new InvalidOperationException(
+                    _resourceStore.GetExceptionMessage("InvalidSemanticsStateForTreeBuilding"));
+            }
+        }
+
+        private void MergeNodesWithTheSamePriority(List<SemanticNode> nodes)
+        {
+            SemanticNode currentNode, nextNode;
+
+            currentNode = nodes[0];
+            bool multipleLineExists = false;
+
+            do
+            {
+                // Step over all nodes.
+                for (int i = 1; i < nodes.Count; i++)
+                {
+                    nextNode = nodes[i];
+
+                    var currentNodeFunction = (BinaryFunctionSemanticNode)currentNode;
+                    var nextNodeFunction = (BinaryFunctionSemanticNode)nextNode;
+
+                    // When priorities of current and next nodes are equal
+                    if (currentNodeFunction.Priority == nextNodeFunction.Priority)
+                    {
+                        // Then merge current node to leftmost node of next node.
+                        MergeNodeToLeftSide(nextNodeFunction, currentNodeFunction);
+                        nodes.Remove(currentNode);
+                        i--;
+                    }
+
+                    // make next node current
+                    currentNode = nextNode;
+                }
+
+            } while (multipleLineExists);
+        }
+
         private void MergeNodeToLeftSide(BinaryFunctionSemanticNode root, BinaryFunctionSemanticNode node)
         {
             var currentNode = root;
@@ -101,6 +93,34 @@ namespace Processing.Semantics
             }
 
             currentNode.LeftChild = node;
+        }
+
+        private void MergeRemainingNodes(List<SemanticNode> nodes)
+        {
+            SemanticNode currentNode, nextNode;
+
+            // When we steped over all nodes and did not make any swap
+            // Then step over all nodes one more time
+            while (nodes.Count > 1)
+            {
+                currentNode = nodes[0];
+                nextNode = nodes[1];
+
+                var currentNodeFunction = (BinaryFunctionSemanticNode)currentNode;
+                var nextNodeFunction = (BinaryFunctionSemanticNode)nextNode;
+
+                // But merge them depending on their priority.
+                if (currentNodeFunction.Priority < nextNodeFunction.Priority)
+                {
+                    MergeNodeToRightSide(currentNodeFunction, nextNodeFunction);
+                    nodes.Remove(nextNode);
+                }
+                else
+                {
+                    MergeNodeToLeftSide(nextNodeFunction, currentNodeFunction);
+                    nodes.Remove(currentNode);
+                }
+            }
         }
 
         private void MergeNodeToRightSide(BinaryFunctionSemanticNode root, BinaryFunctionSemanticNode node)
@@ -135,18 +155,18 @@ namespace Processing.Semantics
             {
                 case SemanticNodeTypes.UnaryFunction:
                     {
-                        var func = (UnaryFunctionSemanticNode)semanticNode;
+                        var funcNode = (UnaryFunctionSemanticNode)semanticNode;
 
-                        Analyze(func.Child, (nc) => func.Child = nc);
+                        Analyze(funcNode.Child, (nc) => funcNode.Child = nc);
                     }
                     break;
                 case SemanticNodeTypes.BinaryFunction:
                     {
 
-                        var func = (BinaryFunctionSemanticNode)semanticNode;
+                        var funcNode = (BinaryFunctionSemanticNode)semanticNode;
 
-                        Analyze(func.LeftChild, (nc) => func.LeftChild = nc);
-                        Analyze(func.RightChild, (nc) => func.RightChild = nc);
+                        Analyze(funcNode.LeftChild, (nc) => funcNode.LeftChild = nc);
+                        Analyze(funcNode.RightChild, (nc) => funcNode.RightChild = nc);
                     }
                     break;
             }

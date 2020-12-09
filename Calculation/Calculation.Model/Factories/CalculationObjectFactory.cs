@@ -65,7 +65,8 @@ namespace Calculation.Model.Factories
                 return unaryFunctionFactory();
             }
 
-            throw new NotSupportedException($"Unknown value: {value}");
+            throw new NotSupportedException(
+                _resourceStore.GetExceptionMessage("UnknownCalculationObject", value));
         }
     }
 }

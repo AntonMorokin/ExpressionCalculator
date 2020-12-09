@@ -117,13 +117,49 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="BinaryFunctionCannotBeFirst" xml:space="preserve">
+    <value>Binary function cannot be first in the expression.</value>
+  </data>
   <data name="CannotRenderFunction" xml:space="preserve">
     <value>Can not render function.</value>
+  </data>
+  <data name="ClosingBraceDoesNotExist" xml:space="preserve">
+    <value>Cannot find closing brace char starting from {0} index in expression {1}.</value>
   </data>
   <data name="DenominatorIsZero" xml:space="preserve">
     <value>Denominator must not be zero.</value>
   </data>
+  <data name="ExpressionCannotBeEmpty" xml:space="preserve">
+    <value>Expression cannot be empty.</value>
+  </data>
+  <data name="FunctionCannotBeLast" xml:space="preserve">
+    <value>{0} function cannot be last in the expression.</value>
+  </data>
+  <data name="FunctionCannotBeSingle" xml:space="preserve">
+    <value>{0} function cannot be only one in the expression.</value>
+  </data>
+  <data name="InvalidSemanticsStateForTreeBuilding" xml:space="preserve">
+    <value>Invalid state of semantics: when building semantic tree all nodes must be binary functions.</value>
+  </data>
+  <data name="InvalidSyntaxTokensOrder" xml:space="preserve">
+    <value>There must be {0} after {1}.</value>
+  </data>
   <data name="NumberOfArgumentsMismatch" xml:space="preserve">
     <value>The number of passed arguments does not correspond to this type of function.</value>
+  </data>
+  <data name="UnknownCalculationObject" xml:space="preserve">
+    <value>Unknown value for creating calculation object: {0}.</value>
+  </data>
+  <data name="UnknownFunctionForPrioritization" xml:space="preserve">
+    <value>Cannot find priority for function: {0}</value>
+  </data>
+  <data name="UnknownSemanticNodeType" xml:space="preserve">
+    <value>Unknown semantic node type: {0}.</value>
+  </data>
+  <data name="UnknownSyntaxToken" xml:space="preserve">
+    <value>Unknown syntax token: {0}</value>
+  </data>
+  <data name="UnknownSyntaxTokenType" xml:space="preserve">
+    <value>Unknown type of syntax token: {0}.</value>
   </data>
 </root>

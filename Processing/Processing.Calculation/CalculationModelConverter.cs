@@ -1,17 +1,20 @@
 ﻿using Calculation.Model;
 using Calculation.Model.Factories;
 using Processing.Semantics.Model;
+using Resources;
 using System;
 
 namespace Processing.Calculation
 {
     internal sealed class CalculationModelConverter : ICalculationModelConverter
     {
+        private readonly IResourceStore _resourceStore;
         private readonly ICalculationObjectFactory _calculationObjectFactory;
 
-        public CalculationModelConverter(ICalculationObjectFactory calculationObjectFactory)
+        public CalculationModelConverter(IResourceStore resourceStore, ICalculationObjectFactory calculationObjectFactory)
         {
             _calculationObjectFactory = calculationObjectFactory;
+            _resourceStore = resourceStore;
         }
 
         public IHasValue ConvertToCalculationModel(SemanticNode semanticTreeRoot)
@@ -50,7 +53,8 @@ namespace Processing.Calculation
                         return func;
                     }
                 default:
-                    throw new NotSupportedException($"Unknown semantic node type: {semanticTreeRoot.Type}.");
+                    throw new NotSupportedException(
+                        _resourceStore.GetExceptionMessage("UnknownSemanticNodeType", semanticTreeRoot.Type));
             }
         }
     }

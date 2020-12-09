@@ -1,4 +1,5 @@
 ﻿using Processing.Syntax.Model;
+using Resources;
 using System;
 using System.Collections.Generic;
 
@@ -6,11 +7,18 @@ namespace Processing.Syntax
 {
     internal sealed class SyntaxAnalyzer : ISyntaxAnalyzer
     {
+        private readonly IResourceStore _resourceStore;
+
+        public SyntaxAnalyzer(IResourceStore resourceStore)
+        {
+            _resourceStore = resourceStore;
+        }
+
         public void AnalyzeCorrectness(IList<SyntaxToken> syntaxTokens)
         {
             if (syntaxTokens.Count == 0)
             {
-                throw new InvalidOperationException("Expression cannot be empty.");
+                throw new InvalidOperationException(_resourceStore.GetExceptionMessage("ExpressionCannotBeEmpty"));
             }
 
             if (syntaxTokens.Count < 2)
@@ -30,11 +38,13 @@ namespace Processing.Syntax
             {
                 case SyntaxTokenTypes.BinaryFunction:
                 {
-                    throw new InvalidOperationException("Binary function cannot be single in the expression.");
+                    throw new InvalidOperationException(
+                        _resourceStore.GetExceptionMessage("FunctionCannotBeSingle", "Binary"));
                 }
                 case SyntaxTokenTypes.UnaryFunction:
                 {
-                    throw new InvalidOperationException("Unary function cannot be single in the expression.");
+                    throw new InvalidOperationException(
+                        _resourceStore.GetExceptionMessage("FunctionCannotBeSingle", "Unary"));
                 }
                 case SyntaxTokenTypes.Braces:
                 {
@@ -54,12 +64,13 @@ namespace Processing.Syntax
             AnalyzeCorrectness(braces.ChildTokens);
         }
 
-        private static void ValidateFirstToken(IList<SyntaxToken> syntaxTokens)
+        private void ValidateFirstToken(IList<SyntaxToken> syntaxTokens)
         {
             var firstToken = syntaxTokens[0];
             if (firstToken.Type == SyntaxTokenTypes.BinaryFunction)
             {
-                throw new InvalidOperationException("Binary function cannot be first in the expression.");
+                throw new InvalidOperationException(
+                    _resourceStore.GetExceptionMessage("BinaryFunctionCannotBeFirst"));
             }
         }
 
@@ -79,7 +90,10 @@ namespace Processing.Syntax
                     {
                         if (nextToken.Type != SyntaxTokenTypes.BinaryFunction)
                         {
-                            throw new InvalidOperationException("There must be binary function after number.");
+                            string message = _resourceStore.GetExceptionMessage(
+                                "InvalidSyntaxTokensOrder", "binary function", "number");
+
+                            throw new InvalidOperationException(message);
                         }
 
                         break;
@@ -88,7 +102,10 @@ namespace Processing.Syntax
                     {
                         if (nextToken.Type != SyntaxTokenTypes.Braces)
                         {
-                            throw new InvalidOperationException("There must be braces with value after unary function.");
+                            var message = _resourceStore.GetExceptionMessage(
+                                "InvalidSyntaxTokensOrder", "braces with value", "unary function");
+
+                            throw new InvalidOperationException(message);
                         }
 
                         break;
@@ -101,13 +118,17 @@ namespace Processing.Syntax
 
                         if (nextToken.Type != SyntaxTokenTypes.BinaryFunction)
                         {
-                            throw new InvalidOperationException("There must be binary function after braces.");
+                            string message = _resourceStore.GetExceptionMessage(
+                                "InvalidSyntaxTokensOrder", "binary function", "braces");
+
+                            throw new InvalidOperationException(message);
                         }
 
                         break;
                     }
                     default:
-                        throw new NotSupportedException($"Unknown type of syntax token: {currentToken.Type}.");
+                        throw new NotSupportedException(
+                            _resourceStore.GetExceptionMessage("UnknownSyntaxTokenType", currentToken.Type));
                 }
             }
         }
@@ -120,11 +141,13 @@ namespace Processing.Syntax
             {
                 case SyntaxTokenTypes.UnaryFunction:
                 {
-                    throw new InvalidOperationException("Unary function cannot be last in the expression.");
+                    throw new InvalidOperationException(
+                        _resourceStore.GetExceptionMessage("FunctionCannotBeLast", "Unary"));
                 }
                 case SyntaxTokenTypes.BinaryFunction:
                 {
-                    throw new InvalidOperationException("Binary function cannot be last in the expression.");
+                    throw new InvalidOperationException(
+                        _resourceStore.GetExceptionMessage("FunctionCannotBeLast", "Binary"));
                 }
                 case SyntaxTokenTypes.Braces:
                 {
